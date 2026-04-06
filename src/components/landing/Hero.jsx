@@ -6,7 +6,7 @@ import {
   ChevronRight, 
   Fish 
 } from 'lucide-react';
-import heroImg_final from '/C:/Users/addah/.gemini/antigravity/brain/fe295921-fb5e-4bff-864e-eebec8c458e0/media__1775310280822.png';
+import heroImg_final from '../../assets/hero-fish.png';
 import { useNavigate } from 'react-router-dom';
 import FeaturesGrid from './FeaturesGrid';
 import { motion, AnimatePresence } from 'framer-motion';
