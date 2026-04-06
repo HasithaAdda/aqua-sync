@@ -29,7 +29,7 @@ const DashboardPreview = () => {
   return (
     <section className="wave-section" style={{ 
       padding: '100px 5% 150px', 
-      backgroundColor: '#000c11', 
+      background: 'radial-gradient(circle at 50% 0%, #001f22 0%, #000c11 100%)', 
       position: 'relative', 
       zIndex: 10,
       overflow: 'hidden'
@@ -52,8 +52,7 @@ const DashboardPreview = () => {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="gradient-text"
-            style={{ fontSize: '3.8rem', marginBottom: '15px', fontWeight: '900', letterSpacing: '2px' }}
+            style={{ fontSize: '3.8rem', color: '#ffffff', marginBottom: '15px', fontWeight: '900', letterSpacing: '2px' }}
           >
             SMART AQUACULTURE CONTROL CENTER
           </motion.h2>

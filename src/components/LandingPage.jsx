@@ -3,6 +3,7 @@ import Navbar from './landing/Navbar';
 import Hero from './landing/Hero';
 import DashboardPreview from './landing/DashboardPreview';
 import Services from './landing/Services';
+import Contact from './landing/Contact';
 import Footer from './landing/Footer';
 
 const LandingPage = ({ user, onEnterApp }) => {
@@ -20,6 +21,7 @@ const LandingPage = ({ user, onEnterApp }) => {
       <DashboardPreview />
       
       <Services />
+      <Contact />
       <Footer />
     </div>
   );
