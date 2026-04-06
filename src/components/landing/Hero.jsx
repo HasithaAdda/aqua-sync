@@ -113,8 +113,8 @@ const FishBreathingBubbles = () => {
   return (
     <div style={{ 
       position: 'absolute', 
-      top: '48%',   /* Mouth vertically centered in fish asset */
-      left: '12%',  /* Mouth on the left side of goldfish */
+      top: '18%',   /* Moved way up: Mouth is on the top-front of the tilted head */
+      left: '5%',   /* Moved left: Mouth is at the very front edge */
       zIndex: 11, 
       pointerEvents: 'none' 
     }}>
