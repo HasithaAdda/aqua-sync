@@ -1,131 +1,128 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { 
-  BrainCircuit, 
-  Droplets, 
-  ShieldAlert, 
   Waves,
-  ChevronRight
+  Fish,
+  Utensils,
+  Bell,
+  Dna,
+  Activity
 } from 'lucide-react';
 import predictionImg from '../../assets/service_prediction.png';
 import monitoringImg from '../../assets/service_monitoring.png';
 import alertsImg from '../../assets/service_alerts.png';
+import farmingImg from '../../assets/aqua_modern_farming.png';
 
 const FeaturesGrid = () => {
-  const services = [
+  const features = [
     {
       id: '01',
-      title: 'AI FISH PREDICTION',
-      desc: 'Get accurate species recommendations based on water, weather & season.',
-      icon: <BrainCircuit size={32} />,
-      img: predictionImg
+      title: 'POND MONITORING',
+      desc: 'Real-time tracking of temperature, pH, and dissolved oxygen levels.',
+      icon: <Waves size={32} />,
+      img: monitoringImg
     },
     {
       id: '02',
-      title: 'WATER MONITORING',
-      desc: 'Analyze temperature, pH, salinity and more in real-time.',
-      icon: <Droplets size={32} />,
-      img: monitoringImg,
-      active: true // Middle card has special "Learn More" visibility in reference
+      title: 'SPECIES RECOMMENDATION',
+      desc: 'AI-driven analysis to recommend the optimal fish species based on environmental parameters.',
+      icon: <Dna size={32} />,
+      img: farmingImg,
+      active: true
     },
     {
       id: '03',
-      title: 'REAL-TIME ALERTS',
-      desc: 'Receive instant warnings for weather & water quality risks.',
-      icon: <ShieldAlert size={32} />,
+      title: 'DISEASE PREDICTION',
+      desc: 'Predict potential health outbreaks before they happen using real-time IoT data and machine learning.',
+      icon: <Activity size={32} />,
+      img: predictionImg
+    },
+    {
+      id: '04',
+      title: 'INSTANT ALERTS',
+      desc: 'Immediate 24/7 notifications for critical water parameter changes.',
+      icon: <Bell size={32} />,
       img: alertsImg
     }
   ];
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2
-      }
-    }
-  };
-
-  const cardVariants = {
-    hidden: { y: 50, opacity: 0 },
-    show: { y: 0, opacity: 1, transition: { duration: 0.8, ease: "easeOut" } }
-  };
-
   return (
-    <section className="wave-section" style={{ padding: '20px 5% 20px', backgroundColor: '#000c11' }}>
+    <section id="features" className="wave-section" style={{ padding: '20px 5% 20px', backgroundColor: '#000c11' }}>
       
       {/* Premium Header */}
       <div className="services-header-premium">
-        <motion.h2 
-          initial={{ opacity: 0, y: -20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          style={{ fontSize: '2.8rem', color: '#fff', fontWeight: '900', letterSpacing: '2px' }}
-        >
-          OUR SERVICES
-        </motion.h2>
+        <h2 style={{ fontSize: '2.8rem', color: '#fff', fontWeight: '900', letterSpacing: '2px' }}>
+          OUR FEATURES
+        </h2>
         <div className="wave-ornament">
           <span></span>
           <Waves size={20} className="wave-icon-small" />
           <span></span>
         </div>
-        <motion.p
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
-          viewport={{ once: true }}
-          style={{ color: 'var(--text-secondary)', maxWidth: '600px', margin: '10px auto 0', fontSize: '1rem', lineHeight: '1.6' }}
-        >
+        <p style={{ color: 'var(--text-secondary)', maxWidth: '600px', margin: '10px auto 0', fontSize: '1rem', lineHeight: '1.6' }}>
           Precision aquaculture management powered by advanced maritime intelligence and real-time aquatic monitoring.
-        </motion.p>
+        </p>
       </div>
 
       {/* High-Fidelity Grid */}
-      <motion.div 
-        variants={containerVariants}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, amount: 0.2 }}
+      <div 
         className="services-grid-high-fidelity"
+        style={{ gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px', maxWidth: '1400px' }}
       >
-        {services.map((service, idx) => (
-          <motion.div 
-            key={service.id}
-            variants={cardVariants}
+        {features.map((feature, idx) => (
+          <div 
+            key={feature.id}
             className="services-card-vertical"
           >
             {/* Background Image */}
-            <img src={service.img} alt={service.title} className="services-card-bg" />
+            <img src={feature.img} alt={feature.title} className="services-card-bg" />
             
             {/* Top Glass Ornament */}
             <div className="services-glass-overlay services-glass-top">
               <span style={{ fontSize: '0.8rem', fontWeight: '900', color: 'var(--seafoam)', letterSpacing: '2px' }}>
-                SERVICE {service.id}
+                FEATURE {feature.id}
               </span>
             </div>
 
             {/* Center Icon Ring */}
             <div className="services-icon-center">
-              {service.icon}
+              {feature.icon}
             </div>
 
             {/* Bottom Glass Content */}
-            <div className="services-glass-overlay services-glass-bottom">
-              <h3 className="services-title-premium">{service.title}</h3>
-              <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.85rem', maxWidth: '80%', marginTop: '10px', lineHeight: '1.4' }}>
-                {service.desc}
+            <div 
+              className="services-glass-overlay services-glass-bottom"
+              style={{ 
+                height: '190px', 
+                padding: '15px 20px 10px', 
+                display: 'flex', 
+                flexDirection: 'column', 
+                justifyContent: 'flex-start',
+                alignItems: 'center'
+              }}
+            >
+              <h3 
+                className="services-title-premium" 
+                style={{ 
+                  fontSize: '1.1rem', 
+                  color: '#fff', 
+                  marginBottom: '6px', 
+                  fontWeight: '800', 
+                  marginTop: '0px', 
+                  lineHeight: '1.2',
+                  textAlign: 'center'
+                }}
+              >
+                {feature.title}
+              </h3>
+              <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.8rem', maxWidth: '95%', margin: '4px auto 0', lineHeight: '1.3' }}>
+                {feature.desc}
               </p>
               
-              <div className="services-btn-reveal">
-                <button className="btn-glass-pill">
-                  LEARN MORE
-                </button>
-              </div>
+
             </div>
-          </motion.div>
+          </div>
         ))}
-      </motion.div>
+      </div>
     </section>
   );
 };

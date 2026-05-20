@@ -2,9 +2,8 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 import oceanBg from '../../assets/ocean-bg.png';
 import { 
   Zap, 
-  Droplet, 
-  ChevronRight, 
-  Fish 
+  Fish,
+  ShieldCheck
 } from 'lucide-react';
 import heroImg_final from '../../assets/hero-fish.png';
 import { useNavigate } from 'react-router-dom';
@@ -150,10 +149,9 @@ const FishBreathingBubbles = () => {
 
 
 
-const Hero = () => {
+const Hero = ({ onEnterApp }) => {
   const navigate   = useNavigate();
   const fishRef    = useRef(null);
-  const statsRef   = useRef(null);
   const bgRef      = useRef(null);  // parallax bg layer
   const rafRef     = useRef(null);
 
@@ -161,8 +159,9 @@ const Hero = () => {
     // ── Scroll-driven parallax on the bg image ──
     const onScroll = () => {
       if (bgRef.current) {
-        // Image moves at 40% of scroll → stays behind content
-        bgRef.current.style.transform = `translateY(${window.scrollY * 0.4}px)`;
+        // Clamp the translation to prevent exposing the top edge
+        const shift = window.scrollY * 0.25; 
+        bgRef.current.style.transform = `translateY(${shift}px)`;
       }
     };
     const scheduleRAF = () => {
@@ -174,9 +173,6 @@ const Hero = () => {
     // ── GSAP fish float ──
     if (fishRef.current) {
       gsap.to(fishRef.current, { y: -15, rotation: 2, duration: 3, repeat: -1, yoyo: true, ease: 'power1.inOut' });
-    }
-    if (statsRef.current) {
-      gsap.to(statsRef.current, { y: 10, duration: 2.5, repeat: -1, yoyo: true, ease: 'sine.inOut' });
     }
 
     return () => {
@@ -207,8 +203,8 @@ const Hero = () => {
       className="wave-section hero-main-section"
       style={{
         minHeight: '100vh',
-        paddingTop: '120px',
-        paddingBottom: '80px',
+        paddingTop: '60px',
+        paddingBottom: '100px',
         position: 'relative',
         overflow: 'hidden',
         background: 'transparent',
@@ -219,10 +215,10 @@ const Hero = () => {
         ref={bgRef}
         style={{
           position: 'absolute',
-          top: '-30%',
+          top: '-50vh',
           left: 0,
           width: '100%',
-          height: '160%',
+          height: 'calc(100% + 50vh)',
           backgroundImage: `url(${oceanBg})`,
           backgroundSize: '100% auto',   /* fill full width, keep landscape ratio */
           backgroundPosition: 'center 40%', /* anchor the light-ray focal point */
@@ -276,22 +272,35 @@ const Hero = () => {
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', width: '90%', maxWidth: '1400px', margin: '0 auto' }}
+        style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', width: '90%', maxWidth: '1400px', margin: '0 auto', height: '100%' }}
       >
         
-        <div style={{ display: 'flex', alignItems: 'center', width: '100%', justifyContent: 'space-between', marginBottom: '100px', gap: '40px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', width: '100%', justifyContent: 'space-between', marginBottom: '20px', gap: '30px', textAlign: 'left', flex: 1 }}>
           
-          <div style={{ flex: 1.4, minWidth: '700px' }}>
-            <motion.span 
-              variants={itemVariants} 
-              style={{ color: 'var(--seafoam)', fontSize: '0.9rem', fontWeight: '800', letterSpacing: '2px', display: 'block' }}
+          <div style={{ flex: 1.4, minWidth: '500px' }}>
+            <motion.div 
+              variants={itemVariants}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '6px 16px',
+                background: 'rgba(45, 212, 191, 0.1)',
+                border: '1px solid rgba(45, 212, 191, 0.2)',
+                borderRadius: '30px',
+                marginBottom: '20px',
+                backdropFilter: 'blur(10px)'
+              }}
             >
-              
-            </motion.span>
+              <ShieldCheck size={16} color="var(--seafoam)" />
+              <span style={{ color: 'var(--seafoam)', fontWeight: '700', fontSize: '0.85rem', letterSpacing: '1px' }}>
+                AI-Powered Management
+              </span>
+            </motion.div>
             
             <motion.h1 
               variants={itemVariants}
-              style={{ fontSize: '7.5rem', marginTop: '20px', marginBottom: '10px', color: '#ffffff', lineHeight: '0.85', fontWeight: '900', letterSpacing: '-5px' }}
+              style={{ fontSize: '6.5rem', marginTop: '0', marginBottom: '5px', color: '#ffffff', lineHeight: '0.85', fontWeight: '900', letterSpacing: '-3px' }}
             >
               AQUA <br /> 
               <span className="gradient-text" style={{ paddingRight: '20px' }}> SYNC</span>
@@ -299,56 +308,42 @@ const Hero = () => {
             
             <motion.div 
               variants={itemVariants}
-              style={{ width: '40px', height: '1px', background: 'var(--seafoam)', margin: '30px 0' }}
+              style={{ width: '40px', height: '1px', background: 'var(--seafoam)', margin: '20px 0' }}
             ></motion.div>
             
             <motion.div 
               variants={itemVariants}
-              style={{ fontSize: '2.5rem', fontWeight: '900', color: '#fff', marginBottom: '30px', letterSpacing: '1px' }}
+              style={{ fontSize: '1.8rem', fontWeight: '900', color: '#fff', marginBottom: '15px', letterSpacing: '1px' }}
             >
-              POWERED BY AI <br />
-              FOR MODERN FISHERY
+              ONE SOLUTION FOR <br />
+              FISH FARMERS & AUTHORITIES
             </motion.div>
 
             
             <motion.p 
               variants={itemVariants}
-              style={{ color: 'var(--text-secondary)', fontSize: '1.25rem', maxWidth: '480px', marginBottom: '50px', lineHeight: '1.7', opacity: 0.8 }}
+              style={{ color: 'var(--text-secondary)', fontSize: '1rem', maxWidth: '400px', marginBottom: '15px', lineHeight: '1.6', opacity: 0.8 }}
             >
-              One Solution For Fish Farmers And Authorities
+              Track water quality, fish growth, and feeding schedules all in one intelligent, real-time dashboard designed for modern pisciculture
             </motion.p>
-
-            <motion.div 
-              variants={itemVariants}
-              style={{ display: 'flex', gap: '20px', alignItems: 'center' }}
-            >
-              <button className="btn-premium" onClick={() => navigate('/dashboard')}>
-                <Zap size={20} fill="currentColor" /> GET STARTED
-              </button>
-              <button className="btn-premium-outline">
-                <Droplet size={20} /> ANALYZE WATER
-              </button>
-              <a href="#features" style={{ color: 'var(--seafoam)', fontWeight: '700', textDecoration: 'none', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '10px', marginLeft: '10px' }}>
-                View Features <ChevronRight size={18} />
-              </a>
-            </motion.div>
           </div>
+
 
           <motion.div 
             initial={{ opacity: 0, scale: 0.9, x: 50 }}
             animate={{ opacity: 1, scale: 1, x: 0 }}
             transition={{ duration: 1, delay: 0.5 }}
-            style={{ flex: 1, display: 'flex', justifyContent: 'center', position: 'relative', marginLeft: '40px' }}
+            style={{ flex: 1, display: 'flex', justifyContent: 'center', position: 'relative' }}
           >
-             <div className="fish-container-premium">
+             <div className="fish-container-premium" style={{ width: '100%', maxWidth: '450px' }}>
                 <FishBreathingBubbles />
                 <img 
                   ref={fishRef}
                   src={heroImg_final} 
-                  alt="Elite Catch" 
+                  alt="Sync Catch" 
                   className="hero-fish-main"
                   style={{ 
-                    width: '140%', 
+                    width: '100%', 
                     zIndex: 10, 
                     position: 'relative', 
                   }} 
@@ -358,14 +353,19 @@ const Hero = () => {
         </div>
 
         <motion.div 
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1, delay: 1 }}
+          variants={itemVariants}
+          style={{ display: 'flex', justifyContent: 'center', width: '100%', marginBottom: '100px', marginTop: '-60px' }}
+        >
+          <button className="btn-premium" onClick={onEnterApp} style={{ padding: '15px 40px', fontSize: '1rem' }}>
+            <Zap size={20} fill="currentColor" /> GET STARTED
+          </button>
+        </motion.div>
+
+        <div 
           style={{ width: '100%', position: 'relative', zIndex: 100, marginBottom: '-40px' }}
         >
            <FeaturesGrid />
-        </motion.div>
+        </div>
       </motion.div>
 
 

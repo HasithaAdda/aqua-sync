@@ -28,12 +28,12 @@ const WMO_CODES = {
     95: { label: 'Thunderstorm', icon: CloudLightning, color: '#ef4444' },
 };
 
-export default function WeatherDashboard() {
+export default function WeatherDashboard({ userLocation }) {
     const [weather, setWeather] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const fetchWeather = async (lat = 15.4989, lng = 73.8278) => {
+    const fetchWeather = async (lat, lng) => {
         setLoading(true);
         try {
             const [weatherRes, marineRes, geoRes] = await Promise.all([
@@ -53,11 +53,11 @@ export default function WeatherDashboard() {
             const condition = WMO_CODES[weatherData.current.weather_code] || { label: 'Clear', icon: Sun, color: '#f59e0b' };
 
             setWeather({
-                location: geoData?.address?.city || geoData?.address?.town || geoData?.address?.county || 'Coastal Zone',
-                temp: weatherData.current.temperature_2m ?? 0,
+                location: geoData?.address?.neighbourhood || geoData?.address?.suburb || geoData?.address?.village || geoData?.address?.town || geoData?.address?.city || 'Geographic Zone',
+                temp: weatherData.current.temperature_2m ?? 28,
                 humidity: weatherData.current.relative_humidity_2m ?? 0,
                 windSpeed: weatherData.current.wind_speed_10m ?? 0,
-                waveHeight: marineData?.current?.wave_height ?? 0.4,
+                waveHeight: marineData?.current?.wave_height ?? 0.8,
                 condition: condition.label,
                 ConditionIcon: condition.icon,
                 color: condition.color,
@@ -73,8 +73,10 @@ export default function WeatherDashboard() {
     };
 
     useEffect(() => {
-        fetchWeather();
-    }, []);
+        if (userLocation.lat && userLocation.lng) {
+            fetchWeather(userLocation.lat, userLocation.lng);
+        }
+    }, [userLocation]);
 
     if (loading) return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: '16px' }}>
