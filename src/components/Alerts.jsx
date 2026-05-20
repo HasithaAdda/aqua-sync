@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { BellRing, ShieldAlert, CheckCircle, Info, Sparkles, ArrowRight, ExternalLink } from 'lucide-react';
 
 const Alerts = ({ sensorData }) => {
-  const { temperature, ph, turbidity } = sensorData || { temperature: 28.4, ph: 7.5, turbidity: 12.0 };
+  const { temperature, ph, turbidity, salinity } = sensorData || { temperature: 28.4, ph: 7.5, turbidity: 12.0, salinity: 32.5 };
 
   const getAlerts = () => {
     const activeAlerts = [];
@@ -107,6 +107,44 @@ const Alerts = ({ sensorData }) => {
           'Let runoff particles sediment naturally; avoid stirring pond bottom.',
           'Construct grass buffer strips around pond edges to filter incoming runoff.',
           'Limit feeding temporarily until turbidity normalizes.'
+        ]
+      });
+    }
+
+    // Salinity Alerts
+    if (salinity < 15) {
+      activeAlerts.push({
+        id: 'salinity-low',
+        title: 'Low Salinity Level',
+        severity: salinity < 5 ? 'critical' : 'warning',
+        parameter: 'Salinity',
+        value: `${salinity} PPT`,
+        limit: 'Safe: 15 - 30 PPT',
+        desc: salinity < 5 
+          ? 'Salinity has dropped to critical levels. Severe osmotic stress could lead to high fish mortality.'
+          : 'Salinity is below the optimal range. Low salinity affects growth rates and increases stress.',
+        recs: [
+          'Reduce freshwater inflow to the pond.',
+          'Introduce brackish/salt water or add commercial salt blocks if possible.',
+          'Ensure drainage systems are active to divert excessive rainwater runoff.'
+        ]
+      });
+    } else if (salinity > 30) {
+      activeAlerts.push({
+        id: 'salinity-high',
+        title: 'High Salinity Level',
+        severity: salinity > 35 ? 'critical' : 'warning',
+        parameter: 'Salinity',
+        value: `${salinity} PPT`,
+        limit: 'Safe: 15 - 30 PPT',
+        desc: salinity > 35
+          ? 'Salinity is critically high. High salinity reduces oxygen solubility and dehydrates aquatic life.'
+          : 'Salinity exceeds optimal threshold. Elevated salinity may slow down feed intake.',
+        recs: [
+          'Add freshwater to dilute salinity levels.',
+          'Perform a partial water exchange with freshwater.',
+          'Ensure aerators are fully running to assist with gas solubility.',
+          'Add shading over critical zones to reduce evaporation.'
         ]
       });
     }

@@ -20,6 +20,7 @@ import {
   Thermometer,
   Droplet,
   Waves,
+  Compass,
   Settings as SettingsIcon,
   Plus,
   ClipboardList
@@ -283,10 +284,11 @@ const FarmerDashboard = ({ sensorData, userLocation }) => (
         <h3 style={{ fontSize: '1.2rem', color: '#fff', letterSpacing: '5px', marginBottom: '35px', fontWeight: '900', display: 'flex', alignItems: 'center', gap: '15px', justifyContent: 'center' }}>
             <Activity size={24} color="var(--seafoam)" /> REAL TIME IOT MONITORING
         </h3>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '40px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '30px' }}>
          <GaugeWidget value={sensorData.temperature} min={0} max={50} label="TEMPERATURE" unit="°C" icon={Thermometer} safeRange={{ safe: [25, 32], danger: [[20, 35]] }} />
          <GaugeWidget value={sensorData.ph} min={0} max={14} label="PH LEVEL" unit="PH" icon={Droplet} safeRange={{ safe: [6.8, 8.5], danger: [[6.5, 9.2]] }} />
          <GaugeWidget value={sensorData.turbidity} min={0} max={100} label="TURBIDITY" unit="NTU" icon={Waves} safeRange={{ safe: [0, 30], danger: [[-100, 60]] }} />
+         <GaugeWidget value={sensorData.salinity} min={0} max={40} label="SALINITY" unit="PPT" icon={Compass} safeRange={{ safe: [15, 30], danger: [[5, 35]] }} />
         </div>
       </div>
       
