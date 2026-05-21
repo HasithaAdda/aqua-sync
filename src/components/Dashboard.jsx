@@ -21,7 +21,6 @@ import {
   Droplet,
   Waves,
   Compass,
-  Settings as SettingsIcon,
   Plus,
   ClipboardList
 } from 'lucide-react';
@@ -37,7 +36,6 @@ import GaugeWidget from './GaugeWidget';
 import LiveWeatherCard from './LiveWeatherCard';
 import FishInsights from './FishInsights';
 import MarketInsights from './MarketInsights';
-import Settings from './Settings';
 import RegionalOverview from './RegionalOverview';
 import ManageFarmers from './ManageFarmers';
 import FarmRegistry from './FarmRegistry';
@@ -148,16 +146,14 @@ const Dashboard = ({ user, role, stats, onLogout }) => {
     { id: '', label: 'AUTHORITY DASHBOARD', icon: <Activity size={20} /> },
     { id: 'registry', label: 'FARM REGISTRY', icon: <ClipboardList size={20} /> },
     { id: 'map', label: 'GIS MAP VIEW', icon: <MapIcon size={20} /> },
-    { id: 'incidents', label: 'INCIDENT LOGS', icon: <ShieldAlert size={20} /> },
-    { id: 'settings', label: 'SETTINGS', icon: <SettingsIcon size={20} /> }
+    { id: 'incidents', label: 'INCIDENT LOGS', icon: <ShieldAlert size={20} /> }
   ] : [
     { id: '', label: 'MY DASHBOARD', icon: <LayoutDashboard size={20} /> },
     { id: 'market', label: 'MARKET INTEL', icon: <TrendingUp size={20} /> },
     { id: 'alerts', label: 'ALERTS', icon: <Bell size={20} /> },
     { id: 'hatcheries', label: 'HATCHERIES', icon: <Waves size={20} /> },
     { id: 'schemes', label: 'GOVT SCHEMES', icon: <ClipboardList size={20} /> },
-    { id: 'incidents', label: 'REPORT ISSUE', icon: <ShieldAlert size={20} /> },
-    { id: 'settings', label: 'SETTINGS', icon: <SettingsIcon size={20} /> }
+    { id: 'incidents', label: 'REPORT ISSUE', icon: <ShieldAlert size={20} /> }
   ];
 
   return (
@@ -247,7 +243,6 @@ const Dashboard = ({ user, role, stats, onLogout }) => {
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'relative', zIndex: 1 }}>
           <Routes>
             {/* Common Routes */}
-            <Route path="settings" element={<div className="glass-deep" style={{ flex: 1, padding: 0, overflowY: 'auto', borderRadius: '32px' }}><Settings onLogout={onLogout} /></div>} />
             <Route path="incidents" element={<div className="glass-deep" style={{ flex: 1, padding: 0, overflow: 'hidden', borderRadius: '32px' }}><IncidentReporting role={role} userLocation={userLocation} /></div>} />
             <Route path="map" element={<div className="glass-deep" style={{ flex: 1, display: 'flex', padding: 0, overflow: 'hidden', borderRadius: '32px' }}><MapDashboard sensorData={sensorData} userLocation={userLocation} /></div>} />
 

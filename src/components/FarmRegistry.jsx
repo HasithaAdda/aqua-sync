@@ -186,7 +186,7 @@ const FarmRegistry = () => {
   });
 
   return (
-    <div style={{ padding: '40px', maxWidth: '1200px', margin: '0 auto', width: '100%', color: '#fff' }}>
+    <div style={{ padding: '60px 40px', maxWidth: '1400px', margin: '0 auto', width: '100%', color: '#fff' }}>
       <AnimatePresence mode="wait">
         {!selectedFarm ? (
           <motion.div 
@@ -196,7 +196,6 @@ const FarmRegistry = () => {
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.3 }}
           >
-
 
             {/* Search and Action */}
             <div style={{ display: 'flex', gap: '20px', marginBottom: '25px' }}>
@@ -248,41 +247,77 @@ const FarmRegistry = () => {
             </div>
 
             {/* List */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               {filteredFarms.map((farm, idx) => (
                 <motion.div 
                   key={farm.id}
-                  initial={{ opacity: 0, y: 10 }}
+                  initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.05 }}
                   onClick={() => setSelectedFarm(farm)}
                   style={{
-                    background: 'rgba(255,255,255,0.02)',
-                    border: '1px solid rgba(255,255,255,0.05)',
-                    borderRadius: '16px',
-                    padding: '24px',
+                    padding: '30px', 
+                    borderRadius: '24px', 
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    background: 'linear-gradient(145deg, rgba(2, 56, 89, 0.3), rgba(1, 28, 64, 0.5))',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     cursor: 'pointer',
-                    transition: 'all 0.2s'
+                    boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
+                    transition: 'all 0.3s ease',
+                    position: 'relative',
+                    overflow: 'hidden'
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
-                    e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)';
+                    e.currentTarget.style.transform = 'translateY(-4px) scale(1.01)';
+                    e.currentTarget.style.borderColor = '#0ea5e9';
+                    e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.5), 0 0 25px rgba(14, 165, 233, 0.2)';
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.background = 'rgba(255,255,255,0.02)';
-                    e.currentTarget.style.borderColor = 'rgba(255,255,255,0.05)';
+                    e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                    e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)';
+                    e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.3)';
                   }}
                 >
-                  <div>
-                    <div style={{ fontSize: '1.1rem', fontWeight: '800', marginBottom: '6px' }}>{farm.name}</div>
-                    <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{ color: '#fff' }}>{farm.owner}</span> • {farm.location}
+                  {/* Glow Orb */}
+                  <div style={{ 
+                    position: 'absolute', 
+                    top: '-20%', 
+                    left: '-10%', 
+                    width: '120px', 
+                    height: '120px', 
+                    background: getStatusColor(farm.status), 
+                    opacity: 0.05, 
+                    filter: 'blur(40px)', 
+                    borderRadius: '50%' 
+                  }}></div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '20px', position: 'relative', zIndex: 1 }}>
+                    <div className="biolume-pulse" style={{ 
+                      width: '55px', 
+                      height: '55px', 
+                      borderRadius: '16px', 
+                      background: 'linear-gradient(135deg, #0ea5e9, #2dd4bf)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#011C40',
+                      fontWeight: '900',
+                      fontSize: '1.2rem',
+                      boxShadow: '0 0 20px rgba(14, 165, 233, 0.3)',
+                      border: '1px solid rgba(255, 255, 255, 0.2)'
+                    }}>
+                      {farm.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '1.2rem', fontWeight: '900', marginBottom: '6px' }}>{farm.name}</div>
+                      <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span style={{ color: '#0ea5e9', fontWeight: '700' }}>{farm.owner}</span> • {farm.location}
+                      </div>
                     </div>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '20px', position: 'relative', zIndex: 1 }}>
                     <div style={{ 
                       padding: '6px 14px', 
                       borderRadius: '50px', 
@@ -341,7 +376,7 @@ const FarmRegistry = () => {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '25px' }}>
               
               {/* Top Info Card */}
-              <div className="glass-deep" style={{ padding: '30px', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.08)' }}>
+              <div className="glass-deep" style={{ padding: '30px', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.1)', background: 'linear-gradient(135deg, rgba(2, 56, 89, 0.3), rgba(1, 28, 64, 0.5))', boxShadow: '0 20px 40px rgba(0,0,0,0.3)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px', paddingBottom: '20px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                   <div>
                     <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', fontWeight: '800', letterSpacing: '1px', marginBottom: '4px' }}>
@@ -380,7 +415,7 @@ const FarmRegistry = () => {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px', color: '#fff', fontWeight: '800', letterSpacing: '1px' }}>
                   <MapPin size={18} color="#ef4444" /> GIS & Location
                 </div>
-                <div className="glass-deep" style={{ padding: '30px', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.08)' }}>
+                <div className="glass-deep" style={{ padding: '30px', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.1)', background: 'linear-gradient(135deg, rgba(2, 56, 89, 0.3), rgba(1, 28, 64, 0.5))', boxShadow: '0 20px 40px rgba(0,0,0,0.3)' }}>
                   <div style={{ display: 'flex', justifyContent: 'center', gap: '80px', marginBottom: '25px', textAlign: 'center' }}>
                     <div>
                       <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', fontWeight: '800', letterSpacing: '1px' }}>LATITUDE</div>
@@ -396,7 +431,7 @@ const FarmRegistry = () => {
                     style={{ width: '100%', display: 'flex', justifyContent: 'center', gap: '10px' }}
                     onClick={() => navigate('/dashboard/map', { state: { farm: selectedFarm } })}
                   >
-                    <Map size={18} /> View on GIS Map
+                    <MapIcon size={18} /> View on GIS Map
                   </button>
                 </div>
               </div>
@@ -406,7 +441,7 @@ const FarmRegistry = () => {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px', color: '#fff', fontWeight: '800', letterSpacing: '1px' }}>
                   <TrendingUp size={18} color="#f59e0b" /> Real-time Trends
                 </div>
-                <div className="glass-deep" style={{ padding: '30px', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.08)' }}>
+                <div className="glass-deep" style={{ padding: '30px', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.1)', background: 'linear-gradient(135deg, rgba(2, 56, 89, 0.3), rgba(1, 28, 64, 0.5))', boxShadow: '0 20px 40px rgba(0,0,0,0.3)' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
                     <div style={{ fontSize: '1rem', fontWeight: '800', letterSpacing: '2px' }}>
                       {MOCK_METRICS[selectedMetric].label} {MOCK_METRICS[selectedMetric].unit && `(${MOCK_METRICS[selectedMetric].unit})`}
@@ -456,7 +491,7 @@ const FarmRegistry = () => {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px', color: '#fff', fontWeight: '800', letterSpacing: '1px' }}>
                   <FileText size={18} color="#0ea5e9" /> Documents
                 </div>
-                <div className="glass-deep" style={{ padding: '20px', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.08)', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <div className="glass-deep" style={{ padding: '25px', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.1)', background: 'linear-gradient(135deg, rgba(2, 56, 89, 0.3), rgba(1, 28, 64, 0.5))', display: 'flex', flexDirection: 'column', gap: '10px', boxShadow: '0 20px 40px rgba(0,0,0,0.3)' }}>
                   {selectedFarm.docs.map((doc, i) => (
                     <div key={i} style={{ 
                       display: 'flex', 

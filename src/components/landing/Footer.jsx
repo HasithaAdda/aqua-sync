@@ -6,7 +6,7 @@ const Footer = () => {
   return (
     <footer className="compact-footer" style={{ 
       backgroundColor: '#000c11', 
-      padding: '60px 8% 40px', /* Reduced padding */
+      padding: '30px 8% 20px', /* Compact padding */
       borderTop: '1px solid rgba(255,255,255,0.05)',
       position: 'relative',
       overflow: 'hidden'
@@ -28,37 +28,24 @@ const Footer = () => {
         margin: '0 auto', 
         display: 'grid', 
         gridTemplateColumns: 'repeat(3, 1fr)', 
-        gap: '40px', /* Reduced gap */
+        gap: '20px', /* Compact gap */
         position: 'relative',
         zIndex: 1
       }}>
         
         {/* Menu Side */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px' }}>
-          <div>
-            <h4 style={{ color: '#fff', fontSize: '0.9rem', fontWeight: '900', letterSpacing: '2px', marginBottom: '20px' }}>MENU</h4>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              <a href="#" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '0.85rem', fontWeight: '600' }}>Home</a>
-              <a href="#features" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '0.85rem', fontWeight: '600' }}>Services</a>
-            </div>
-          </div>
-          <div style={{ marginTop: '42px' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              <a href="#" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '0.85rem', fontWeight: '600' }}>Projects</a>
-              <a href="#" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '0.85rem', fontWeight: '600' }}>News</a>
-            </div>
-          </div>
-          <div style={{ marginTop: '0px' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              <a href="#" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '0.85rem', fontWeight: '600' }}>Reviews</a>
-              <a href="#contact" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '0.85rem', fontWeight: '600' }}>Contact</a>
-            </div>
+        <div>
+          <h4 style={{ color: '#fff', fontSize: '0.9rem', fontWeight: '900', letterSpacing: '2px', marginBottom: '15px' }}>MENU</h4>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <a href="#" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '0.85rem', fontWeight: '600' }}>Home</a>
+            <a href="#features" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '0.85rem', fontWeight: '600' }}>Features</a>
+            <a href="#contact" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '0.85rem', fontWeight: '600' }}>Contact Us</a>
           </div>
         </div>
 
         {/* Socials Side */}
         <div style={{ textAlign: 'center' }}>
-          <h4 style={{ color: '#fff', fontSize: '0.9rem', fontWeight: '900', letterSpacing: '2px', marginBottom: '20px', textTransform: 'uppercase' }}>FOLLOW US</h4>
+          <h4 style={{ color: '#fff', fontSize: '0.9rem', fontWeight: '900', letterSpacing: '2px', marginBottom: '15px', textTransform: 'uppercase' }}>FOLLOW US</h4>
           <div style={{ display: 'flex', justifyContent: 'center', gap: '15px' }}>
             <div className="feature-card-icon-blob" style={{ width: '40px', height: '40px', cursor: 'pointer' }}>
                <Globe size={18} />
@@ -76,7 +63,7 @@ const Footer = () => {
              alt="Aqua Sync Logo" 
              className="footer-logo-small"
              style={{ 
-               width: '180px', /* Reduced size */
+               width: '140px', /* Compact size */
                opacity: 0.8, 
                filter: 'drop-shadow(0 0 30px rgba(45,212,191,0.15))' 
              }} 
@@ -87,8 +74,8 @@ const Footer = () => {
 
       <div style={{ 
         maxWidth: '1400px', 
-        margin: '40px auto 0', 
-        paddingTop: '20px', 
+        margin: '20px auto 0', 
+        paddingTop: '15px', 
         borderTop: '1px solid rgba(255,255,255,0.03)',
         textAlign: 'center',
         color: 'rgba(255,255,255,0.15)',

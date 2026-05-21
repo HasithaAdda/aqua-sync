@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents, Circle } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -92,10 +92,12 @@ const standardFarmIcon = L.divIcon({
 
 
 
-function MapEvents({ setCursorPos }) {
+function MapEvents({ coordinatesRef }) {
     useMapEvents({ 
         mousemove(e) { 
-            setCursorPos(e.latlng); 
+            if (coordinatesRef.current) {
+                coordinatesRef.current.innerText = `${e.latlng.lat.toFixed(5)}, ${e.latlng.lng.toFixed(5)}`;
+            }
         } 
     });
     return null;
@@ -111,10 +113,7 @@ export default function MapDashboard({ sensorData, userLocation }) {
     const [incidents, setIncidents] = useState([]);
     const [mapMode, setMapMode] = useState('street');
     const [activeLayers, setActiveLayers] = useState(['hotspots', 'farms']);
-    const [cursorPos, setCursorPos] = useState({ 
-        lat: effectiveLocation?.lat || 15.42000, 
-        lng: effectiveLocation?.lng || 73.80000 
-    });
+    const coordinatesRef = useRef(null);
 
     // Sub-component to handle map re-centering
     const MapController = ({ lat, lng }) => {
@@ -158,7 +157,7 @@ export default function MapDashboard({ sensorData, userLocation }) {
                     <TileLayer url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" attribution="Esri" />
                 )}
 
-                <MapEvents setCursorPos={setCursorPos} />
+                <MapEvents coordinatesRef={coordinatesRef} />
 
                 {/* ── 0. SELECTED FARM ── */}
                 {farmState && (
@@ -326,7 +325,7 @@ export default function MapDashboard({ sensorData, userLocation }) {
             <div style={{ position: 'absolute', bottom: '0', left: '0', width: '100%', height: '35px', background: 'rgba(255, 255, 255, 0.9)', backdropFilter: 'blur(10px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px', borderTop: '1px solid #e2e8f0', color: '#64748b', fontSize: '0.7rem', fontWeight: '800' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <Navigation size={12} color="#94a3b8" />
-                    <span>{cursorPos.lat.toFixed(5)}, {cursorPos.lng.toFixed(5)}</span>
+                    <span ref={coordinatesRef}>{(effectiveLocation?.lat || 15.42000).toFixed(5)}, {(effectiveLocation?.lng || 73.80000).toFixed(5)}</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
