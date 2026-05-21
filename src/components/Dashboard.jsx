@@ -22,7 +22,8 @@ import {
   Waves,
   Compass,
   Plus,
-  ClipboardList
+  ClipboardList,
+  BrainCircuit
 } from 'lucide-react';
 import { useNavigate, NavLink, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -35,6 +36,7 @@ import WeatherDashboard from './WeatherDashboard';
 import GaugeWidget from './GaugeWidget';
 import LiveWeatherCard from './LiveWeatherCard';
 import FishInsights from './FishInsights';
+import SpeciesRecommendation from './SpeciesRecommendation';
 import MarketInsights from './MarketInsights';
 import RegionalOverview from './RegionalOverview';
 import ManageFarmers from './ManageFarmers';
@@ -129,7 +131,7 @@ const Dashboard = ({ user, role, stats, onLogout }) => {
   const getHeaderTitle = () => {
     const path = location.pathname;
     if (path.includes('/map')) return 'GIS MAP VIEW';
-    if (path.includes('/incidents')) return 'INCIDENT LOGS';
+    if (path.includes('/incidents')) return role === 'authority' ? 'AUTHORITY INCIDENT LOGS' : 'INCIDENT LOGS';
     if (path.includes('/weather')) return 'METEOROLOGICAL DATA';
     if (path.includes('/insights')) return 'BIOLOGICAL INSIGHTS';
     if (path.includes('/market')) return 'MARKET INTEL & TRENDS';
@@ -147,6 +149,7 @@ const Dashboard = ({ user, role, stats, onLogout }) => {
     if (path.includes('/schemes')) return 'Explore financial assistances and development programs by the Directorate of Fisheries, Goa';
     if (path.includes('/hatcheries')) return 'Locate state-certified breeding facilities and obtain premium quality seeds in Goa';
     if (path.includes('/alerts')) return 'Biosecurity recommendations based on live IoT sensor readings';
+    if (path.includes('/incidents') && role === 'authority') return 'Monitor and manage all incoming distress signals and suspicious activity reports.';
     return null;
   };
 
@@ -157,6 +160,7 @@ const Dashboard = ({ user, role, stats, onLogout }) => {
     { id: 'incidents', label: 'INCIDENT LOGS', icon: <ShieldAlert size={20} /> }
   ] : [
     { id: '', label: 'MY DASHBOARD', icon: <LayoutDashboard size={20} /> },
+    { id: 'species', label: 'SPECIES PREDICTION', icon: <BrainCircuit size={20} /> },
     { id: 'market', label: 'MARKET INTEL', icon: <TrendingUp size={20} /> },
     { id: 'alerts', label: 'ALERTS', icon: <Bell size={20} /> },
     { id: 'hatcheries', label: 'HATCHERIES', icon: <Waves size={20} /> },
@@ -186,7 +190,13 @@ const Dashboard = ({ user, role, stats, onLogout }) => {
 
         <nav style={{ padding: '30px 20px', display: 'flex', flexDirection: 'column', gap: '15px', flex: 1, overflowY: 'auto' }}>
           {navLinks.map((item) => (
-            <NavLink key={item.id} to={`/dashboard/${item.id}`} end={item.id === ''} className={({ isActive }) => `btn ${isActive ? 'btn-premium' : 'btn-premium-outline'}`} style={{ justifyContent: 'flex-start', width: '100%', padding: '16px 24px', textDecoration: 'none', border: 'none', boxShadow: 'none' }}>
+            <NavLink 
+              key={item.id} 
+              to={item.id ? `/dashboard/${item.id}` : '/dashboard'} 
+              end={item.id === ''} 
+              className={({ isActive }) => `btn ${isActive ? 'btn-premium' : 'btn-premium-outline'}`} 
+              style={{ justifyContent: 'flex-start', width: '100%', padding: '16px 24px', textDecoration: 'none', border: 'none', boxShadow: 'none' }}
+            >
               {item.icon} {item.label}
             </NavLink>
           ))}
@@ -261,6 +271,7 @@ const Dashboard = ({ user, role, stats, onLogout }) => {
             ) : (
               <>
                 <Route index element={<FarmerDashboard sensorData={sensorData} userLocation={userLocation} />} />
+                <Route path="species" element={<div className="glass-deep" style={{ flex: 1, padding: 0, overflowY: 'auto', borderRadius: '32px' }}><SpeciesRecommendation sensorData={sensorData} /></div>} />
                 <Route path="market" element={<div className="glass-deep" style={{ flex: 1, padding: 0, overflowY: 'auto', borderRadius: '32px' }}><MarketInsights sensorData={sensorData} /></div>} />
                 <Route path="alerts" element={<div className="glass-deep" style={{ flex: 1, padding: 0, overflowY: 'auto', borderRadius: '32px' }}><Alerts sensorData={sensorData} /></div>} />
                 <Route path="hatcheries" element={<div className="glass-deep" style={{ flex: 1, padding: 0, overflowY: 'auto', borderRadius: '32px' }}><Hatcheries /></div>} />
@@ -295,7 +306,7 @@ const FarmerDashboard = ({ sensorData, userLocation }) => (
       
       <div style={{ marginBottom: '60px' }}>
         <h3 style={{ fontSize: '1.2rem', color: '#fff', letterSpacing: '5px', marginBottom: '35px', fontWeight: '900', display: 'flex', alignItems: 'center', gap: '15px', justifyContent: 'center' }}>
-            <Fish size={24} color="var(--seafoam)" /> MARINE INTELLIGENCE
+            <ShieldAlert size={24} color="var(--error)" /> DISEASE PREDICTION
         </h3>
         <FishInsights sensorData={sensorData} />
       </div>

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  Phone, 
-  MapPin, 
-  Clock, 
+import {
+  Phone,
+  MapPin,
+  Clock,
   Send,
   Waves
 } from 'lucide-react';
@@ -17,8 +17,7 @@ const Contact = () => {
     lastName: '',
     phone: '',
     email: '',
-    message: '',
-    consent: false
+    message: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null); // 'success' | 'error' | null
@@ -33,8 +32,8 @@ const Contact = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.firstName || !formData.lastName || !formData.email || !formData.message || !formData.consent) {
-      alert("Please fill in all required fields and check the consent box.");
+    if (!formData.firstName || !formData.lastName || !formData.email || !formData.message) {
+      alert("Please fill in all required fields.");
       return;
     }
 
@@ -52,8 +51,7 @@ const Contact = () => {
         lastName: '',
         phone: '',
         email: '',
-        message: '',
-        consent: false
+        message: ''
       });
       setTimeout(() => setSubmitStatus(null), 5000); // clear success message after 5 seconds
     } catch (error) {
@@ -65,21 +63,21 @@ const Contact = () => {
   };
 
   return (
-    <section id="contact" style={{ 
-      padding: '100px 5%', 
-      backgroundColor: '#000c11', 
+    <section id="contact" style={{
+      padding: '100px 5%',
+      backgroundColor: '#000c11',
       position: 'relative',
       overflow: 'hidden',
       background: 'radial-gradient(circle at 70% 30%, #001e26 0%, #000c11 100%)'
     }}>
-      
+
       {/* Bioluminescent Orbs */}
       <div className="orb-biolume" style={{ top: '-10%', left: '-10%', opacity: 0.5 }}></div>
       <div className="orb-biolume" style={{ bottom: '-10%', right: '10%', opacity: 0.3, width: '600px', height: '600px' }}></div>
 
       {/* Centered Heading */}
       <div style={{ textAlign: 'center', marginBottom: '60px', position: 'relative', zIndex: 2 }}>
-        <motion.h2 
+        <motion.h2
           initial={{ opacity: 0, scale: 0.9 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
@@ -96,7 +94,7 @@ const Contact = () => {
       </div>
 
       <div style={{ maxWidth: '1300px', margin: '0 auto', display: 'grid', gridTemplateColumns: '1.1fr 0.9fr', gap: '50px', alignItems: 'center', position: 'relative', zIndex: 2 }}>
-        
+
         {/* Form Side */}
         <motion.div
           initial={{ opacity: 0, x: -50 }}
@@ -106,33 +104,33 @@ const Contact = () => {
           className="form-container-premium"
         >
           <div style={{ marginBottom: '30px' }}>
-            <h3 style={{ color: '#fff', fontSize: '1.5rem', marginBottom: '10px', letterSpacing: '2px' }}>SECURE TRANSMISSION</h3>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Send your telemetry queries or administrative requests directly to our command center.</p>
+            <h3 style={{ color: '#fff', fontSize: '1.5rem', marginBottom: '10px', letterSpacing: '2px' }}>Get Started Now</h3>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: '1.5' }}>Your comments help us achieve our objective of being a center of excellence in education. Thank you.</p>
           </div>
 
           <form onSubmit={handleSubmit}>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
               <div>
                 <label className="form-label-premium">FIRST NAME</label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   name="firstName"
                   value={formData.firstName}
                   onChange={handleChange}
-                  className="form-input-premium" 
-                  placeholder="First name" 
+                  className="form-input-premium"
+                  placeholder="First name"
                   required
                 />
               </div>
               <div>
                 <label className="form-label-premium">LAST NAME</label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   name="lastName"
                   value={formData.lastName}
                   onChange={handleChange}
-                  className="form-input-premium" 
-                  placeholder="Last name" 
+                  className="form-input-premium"
+                  placeholder="Last name"
                   required
                 />
               </div>
@@ -141,65 +139,52 @@ const Contact = () => {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
               <div>
                 <label className="form-label-premium">PHONE</label>
-                <input 
-                  type="tel" 
+                <input
+                  type="tel"
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  className="form-input-premium" 
-                  placeholder="" 
+                  className="form-input-premium"
+                  placeholder=""
                 />
               </div>
               <div>
                 <label className="form-label-premium">EMAIL</label>
-                <input 
-                  type="email" 
+                <input
+                  type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className="form-input-premium" 
-                  placeholder="abc@gmail.com" 
+                  className="form-input-premium"
+                  placeholder="abc@gmail.com"
                   required
                 />
               </div>
             </div>
 
             <div style={{ marginBottom: '20px' }}>
-              <label className="form-label-premium">MESSAGE DEPOSITION</label>
-              <textarea 
+              <label className="form-label-premium">MESSAGE</label>
+              <textarea
                 name="message"
                 value={formData.message}
                 onChange={handleChange}
-                className="form-input-premium" 
-                rows="4" 
+                className="form-input-premium"
+                rows="4"
                 style={{ resize: 'none' }}
-                placeholder="Detailed report contents..."
+                placeholder="Message..."
                 required
               ></textarea>
             </div>
 
-            <div style={{ marginTop: '25px', display: 'flex', alignItems: 'center', gap: '15px' }}>
-              <input 
-                type="checkbox" 
-                id="consent" 
-                name="consent"
-                checked={formData.consent}
-                onChange={handleChange}
-                style={{ accentColor: 'var(--seafoam)', width: '18px', height: '18px' }} 
-                required
-              />
-              <label htmlFor="consent" style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', cursor: 'pointer' }}>
-                I authorize the processing of this maritime telemetry query.
-              </label>
-            </div>
 
-            <button 
+
+            <button
               type="submit"
               disabled={isSubmitting}
-              className="btn-premium" 
+              className="btn-premium"
               style={{ marginTop: '30px', width: '100%', justifyContent: 'center', fontSize: '1rem', opacity: isSubmitting ? 0.7 : 1 }}
             >
-               {isSubmitting ? 'TRANSMITTING...' : 'SEND MESSAGE'} <Send size={20} />
+              {isSubmitting ? 'TRANSMITTING...' : 'SEND MESSAGE'} <Send size={20} />
             </button>
             {submitStatus === 'success' && (
               <p style={{ color: 'var(--seafoam)', marginTop: '15px', textAlign: 'center', fontSize: '0.9rem' }}>
@@ -216,8 +201,8 @@ const Contact = () => {
 
         {/* Info Side */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '25px' }}>
-          
-          <motion.div 
+
+          <motion.div
             initial={{ opacity: 0, x: 50 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
@@ -233,7 +218,7 @@ const Contact = () => {
             </div>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: 50 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
@@ -249,7 +234,7 @@ const Contact = () => {
             </div>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: 50 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
@@ -270,9 +255,9 @@ const Contact = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 1, delay: 0.4 }}
-            style={{ 
+            style={{
               marginTop: '10px',
-              borderRadius: '24px', 
+              borderRadius: '24px',
               overflow: 'hidden',
               border: '1px solid rgba(255,255,255,0.1)',
               boxShadow: '0 30px 60px rgba(0,0,0,0.5)',
@@ -280,12 +265,12 @@ const Contact = () => {
               position: 'relative'
             }}
           >
-             <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, #000c11, transparent)', zIndex: 1, opacity: 0.6 }}></div>
-             <img 
-               src={contactImg} 
-               alt="Underworld" 
-               style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
-             />
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, #000c11, transparent)', zIndex: 1, opacity: 0.6 }}></div>
+            <img
+              src={contactImg}
+              alt="Underworld"
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
           </motion.div>
         </div>
 

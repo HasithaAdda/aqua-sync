@@ -302,42 +302,38 @@ export default function IncidentReporting({ role, userLocation }) {
                     height: '100%', 
                     width: '100%', 
                     padding: '24px', 
-                    background: '#f0f4f8', 
+                    background: 'transparent', 
                     fontFamily: "'Inter', sans-serif",
-                    overflowY: 'auto'
+                    overflow: 'hidden', // Stop outer scrolling
+                    display: 'flex',
+                    flexDirection: 'column'
                 }}>
-                    <div style={{ 
+                    <div className="glass-deep" style={{ 
                         maxWidth: '1400px',
+                        width: '100%',
                         margin: '0 auto',
-                        background: '#ffffff', 
-                        borderRadius: '12px', 
-                        boxShadow: '0 4px 20px rgba(0,0,0,0.05)', 
+                        background: 'rgba(0,12,17,0.7)', 
+                        borderRadius: '24px', 
+                        boxShadow: '0 4px 30px rgba(0,0,0,0.5)', 
                         display: 'flex', 
                         flexDirection: 'column',
-                        minHeight: 'calc(100vh - 48px)',
-                        border: '1px solid #e2e8f0'
+                        flex: 1, // Take up remaining height
+                        overflow: 'hidden', // Stop inner wrapper scrolling
+                        border: '1px solid rgba(255,255,255,0.08)',
+                        backdropFilter: 'blur(20px)'
                     }}>
-                        <div style={{ padding: '24px 40px', borderBottom: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'sticky', top: 0, background: '#fff', zIndex: 10 }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                                <div style={{ padding: '10px', background: '#e0f2fe', borderRadius: '10px', color: '#0284c7' }}>
-                                    <Shield size={24} />
-                                </div>
-                                <div>
-                                    <h2 style={{ margin: 0, fontSize: '1.5rem', color: '#0f172a', fontWeight: 800 }}>Maritime Authority Intelligence Log</h2>
-                                    <p style={{ margin: 0, fontSize: '0.85rem', color: '#64748b' }}>Monitor and manage all incoming distress signals and suspicious activity reports.</p>
-                                </div>
-                            </div>
-                            <div style={{ textAlign: 'right' }}>
-                                <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0284c7' }}>{myReports.length}</div>
-                                <div style={{ fontSize: '0.7rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '1px' }}>Total Signals</div>
+                        <div style={{ flexShrink: 0, padding: '20px 40px', borderBottom: '1px solid rgba(255,255,255,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', background: 'rgba(0,12,17,0.8)', zIndex: 10, borderTopLeftRadius: '24px', borderTopRightRadius: '24px' }}>
+                            <div style={{ textAlign: 'right', background: 'rgba(255,255,255,0.03)', padding: '10px 20px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                                <div style={{ fontSize: '1.5rem', fontWeight: 900, color: '#0ea5e9' }}>{myReports.length}</div>
+                                <div style={{ fontSize: '0.65rem', fontWeight: 800, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '2px' }}>Total Reports</div>
                             </div>
                         </div>
 
-                        <div style={{ padding: '40px' }}>
+                        <div style={{ padding: '40px', flex: 1, overflowY: 'auto' }}>
                             {myReports.length === 0 ? (
-                                <div style={{ textAlign: 'center', padding: '100px 20px', color: '#94a3b8' }}>
-                                    <History size={64} style={{ opacity: 0.2, margin: '0 auto 20px' }} />
-                                    <h3 style={{ fontSize: '1.25rem', fontWeight: 600 }}>No reports recorded in the system.</h3>
+                                <div style={{ textAlign: 'center', padding: '100px 20px', color: 'rgba(255,255,255,0.3)' }}>
+                                    <History size={64} style={{ opacity: 0.5, margin: '0 auto 20px' }} />
+                                    <h3 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#fff' }}>No reports recorded in the system.</h3>
                                 </div>
                             ) : (
                                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))', gap: '24px' }}>
@@ -347,72 +343,74 @@ export default function IncidentReporting({ role, userLocation }) {
                                             initial={{ opacity: 0, y: 20 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             style={{
-                                                border: '1px solid #e2e8f0',
+                                                border: '1px solid rgba(255,255,255,0.08)',
                                                 borderRadius: '16px',
                                                 padding: '24px',
-                                                background: '#f8fafc',
+                                                background: 'rgba(25, 39, 52, 0.4)',
                                                 position: 'relative',
                                                 display: 'flex',
                                                 flexDirection: 'column',
                                                 gap: '16px',
-                                                transition: 'transform 0.2s, box-shadow 0.2s'
+                                                transition: 'transform 0.2s, box-shadow 0.2s, border 0.2s'
                                             }}
-                                            whileHover={{ y: -4, boxShadow: '0 12px 24px rgba(0,0,0,0.05)' }}
+                                            whileHover={{ y: -4, boxShadow: '0 12px 30px rgba(0,0,0,0.4)', border: '1px solid rgba(14, 165, 233, 0.3)' }}
                                         >
-                                            <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: '6px', background: report.status === 'Action Taken' ? '#22c55e' : report.status === 'Investigating' ? '#f59e0b' : '#0284c7' }} />
+                                            <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: '6px', borderTopLeftRadius: '16px', borderBottomLeftRadius: '16px', background: report.status === 'Action Taken' ? '#10b981' : report.status === 'Investigating' ? '#f59e0b' : '#0ea5e9' }} />
                                             
                                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                                                 <div style={{ flex: 1 }}>
-                                                    <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#0284c7', textTransform: 'uppercase', marginBottom: '4px' }}>
+                                                    <div style={{ fontSize: '0.7rem', fontWeight: 800, color: '#0ea5e9', textTransform: 'uppercase', marginBottom: '6px', letterSpacing: '1px' }}>
                                                         {report.vesselType}
                                                     </div>
-                                                    <h4 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800, color: '#0f172a' }}>
+                                                    <h4 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800, color: '#fff' }}>
                                                         {report.activityType}
                                                     </h4>
                                                 </div>
                                                 <span style={{ 
-                                                    background: report.status === 'Action Taken' ? '#dcfce7' : report.status === 'Investigating' ? '#fef3c7' : '#e0f2fe',
-                                                    color: report.status === 'Action Taken' ? '#166534' : report.status === 'Investigating' ? '#92400e' : '#0284c7',
-                                                    padding: '6px 12px', borderRadius: '8px', fontSize: '0.75rem', fontWeight: 700
+                                                    background: report.status === 'Action Taken' ? 'rgba(16, 185, 129, 0.1)' : report.status === 'Investigating' ? 'rgba(245, 158, 11, 0.1)' : 'rgba(14, 165, 233, 0.1)',
+                                                    color: report.status === 'Action Taken' ? '#10b981' : report.status === 'Investigating' ? '#f59e0b' : '#0ea5e9',
+                                                    border: `1px solid ${report.status === 'Action Taken' ? 'rgba(16, 185, 129, 0.3)' : report.status === 'Investigating' ? 'rgba(245, 158, 11, 0.3)' : 'rgba(14, 165, 233, 0.3)'}`,
+                                                    padding: '6px 12px', borderRadius: '8px', fontSize: '0.7rem', fontWeight: 800, letterSpacing: '0.5px', textTransform: 'uppercase'
                                                 }}>
                                                     {report.status}
                                                 </span>
                                             </div>
 
-                                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', fontSize: '0.85rem', color: '#475569', background: '#fff', padding: '12px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', fontSize: '0.8rem', color: 'var(--text-secondary)', background: 'rgba(0,0,0,0.2)', padding: '16px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.03)' }}>
                                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                                    <User size={14} color="#94a3b8" /> {report.reporterName || 'Anonymous'}
+                                                    <User size={14} color="#0ea5e9" /> {report.reporterName || 'Anonymous'}
                                                 </div>
                                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                                    <Clock size={14} color="#94a3b8" /> {report.timestamp?.toDate()?.toLocaleDateString() || 'Recently'}
+                                                    <Clock size={14} color="#0ea5e9" /> {report.timestamp?.toDate()?.toLocaleDateString() || 'Recently'}
                                                 </div>
                                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', gridColumn: 'span 2' }}>
-                                                    <MapPin size={14} color="#94a3b8" /> {report.locationName || 'Location Not Specified'}
+                                                    <MapPin size={14} color="#0ea5e9" /> {report.locationName || 'Location Not Specified'}
                                                 </div>
                                             </div>
 
-                                            <div style={{ fontSize: '0.9rem', color: '#334155', lineHeight: 1.6, flex: 1 }}>
-                                                <strong style={{ display: 'block', color: '#0f172a', marginBottom: '4px' }}>Report Details:</strong>
+                                            <div style={{ fontSize: '0.85rem', color: '#e2e8f0', lineHeight: 1.6, flex: 1, padding: '8px 0' }}>
+                                                <strong style={{ display: 'block', color: 'var(--text-secondary)', marginBottom: '6px', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Report Details:</strong>
                                                 {report.description}
                                             </div>
 
-                                            <div style={{ display: 'flex', gap: '10px', marginTop: '8px' }}>
+                                            <div style={{ display: 'flex', gap: '10px', marginTop: 'auto' }}>
                                                 {['Pending', 'Investigating', 'Action Taken'].map(status => (
                                                     <button
                                                         key={status}
                                                         onClick={() => handleStatusChange(report.id, status)}
                                                         style={{
                                                             flex: 1,
-                                                            padding: '10px 4px',
+                                                            padding: '12px 4px',
                                                             fontSize: '0.7rem',
                                                             fontWeight: 800,
                                                             borderRadius: '8px',
-                                                            border: '1px solid #e2e8f0',
-                                                            background: report.status === status ? '#0284c7' : '#fff',
-                                                            color: report.status === status ? '#fff' : '#64748b',
+                                                            border: `1px solid ${report.status === status ? 'transparent' : 'rgba(255,255,255,0.1)'}`,
+                                                            background: report.status === status ? '#0ea5e9' : 'rgba(255,255,255,0.02)',
+                                                            color: report.status === status ? '#fff' : 'var(--text-secondary)',
                                                             cursor: 'pointer',
                                                             transition: 'all 0.2s',
-                                                            textTransform: 'uppercase'
+                                                            textTransform: 'uppercase',
+                                                            letterSpacing: '0.5px'
                                                         }}
                                                     >
                                                         {status}

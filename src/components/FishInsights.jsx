@@ -1,289 +1,265 @@
 import React, { useState, useEffect } from 'react';
+import { Info, BrainCircuit, ShieldPlus } from 'lucide-react';
+import { getDiseasePrediction } from '../services/predictionService';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  LineChart, 
-  Line, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer,
-  AreaChart,
-  Area
-} from 'recharts';
-import { 
-  Fish, 
-  TrendingUp, 
-  AlertTriangle, 
-  Lightbulb, 
-  MapPin, 
-  Activity,
-  Droplet,
-  Waves,
-  Thermometer,
-  Zap,
-  ChevronRight,
-  BrainCircuit,
-  ShieldAlert,
-  Cpu,
-  Tornado,
-  Waves as WavesIcon
-} from 'lucide-react';
 
-// --- DESIGN TOKENS (Abyssal Lumina) ---
-const COLORS = {
-  background: '#060f18',
-  primary: '#a1faff',
-  primaryGlow: 'rgba(161, 250, 255, 0.3)',
-  secondary: '#73f1e7',
-  tertiary: '#d9ffee',
-  error: '#ff716c',
-  errorGlow: 'rgba(255, 113, 108, 0.3)',
-  warning: '#facc15',
-  surface: '#0e1b26',
-  surfaceVariant: 'rgba(25, 39, 52, 0.4)',
-  textPrimary: '#e5effc',
-  textSecondary: '#a2acb8',
-};
+const RiskProfile = ({ species, sensorData }) => {
+  const [status, setStatus] = useState("AI Analyzing...");
+  const [riskLevel, setRiskLevel] = useState(0); // 0: safe, 1: medium, 2: high
+  const [isWaiting, setIsWaiting] = useState(true);
+  const [showModal, setShowModal] = useState(false);
 
-// Mock trend data
-const mockTrendData = Array.from({ length: 24 }, (_, i) => ({
-  time: `${i}:00`,
-  salinity: 30 + Math.random() * 5,
-  oxygen: 5 + Math.random() * 3,
-  temp: 26 + Math.random() * 4,
-  ph: 7.0 + Math.random() * 1.0
-}));
+  useEffect(() => {
+    let isMounted = true;
+    const fetchPrediction = async () => {
+      setIsWaiting(true);
+      try {
+        const result = await getDiseasePrediction(
+          species === "Asian Seabass" ? "Seabass" : species, 
+          sensorData.temperature, 
+          sensorData.ph, 
+          sensorData.turbidity, 
+          sensorData.dissolvedOxygen || 6.0
+        );
+        
+        if (isMounted) {
+          let lowerStatus = result.toLowerCase();
+          if (lowerStatus.includes("healthy") || lowerStatus.includes("safe") || result.trim() === "") {
+            setStatus("Healthy");
+            setRiskLevel(0);
+          } else if (lowerStatus.includes("mild")) {
+            setStatus(result);
+            setRiskLevel(1);
+          } else {
+            setStatus(result);
+            setRiskLevel(2);
+          }
+        }
+      } catch (err) {
+        if (isMounted) {
+          setStatus("ML Server Offline");
+          setRiskLevel(1); // Warning color for offline
+        }
+      } finally {
+        if (isMounted) setIsWaiting(false);
+      }
+    };
 
-const FishInsights = ({ sensorData }) => {
-  const [selectedSpecies, setSelectedSpecies] = useState(null);
+    fetchPrediction();
+    return () => { isMounted = false; };
+  }, [sensorData, species]);
 
-  const speciesPredictions = [
-    { name: 'Chonak (Seabass)', confidence: 98, status: 'OPTIMAL', description: 'Environmental metrics align 98% with peak growth parameters for estuary-based Lates calcarifer.', id: 'chonak' },
-    { name: 'Tamso (Red Snapper)', confidence: 84, status: 'STABLE', description: 'Salinity levels are within tolerance, though temperature is 1.2°C above ideal for premium curry fish.', id: 'tamso' },
-    { name: 'Modso (Black Kingfish)', confidence: 76, status: 'VIABLE', description: 'Dissolved oxygen levels are acceptable for moderate stock density. Popular for local market demand.', id: 'modso' }
-  ];
+  const getStatusColor = () => {
+    if (isWaiting) return 'rgba(255,255,255,0.5)';
+    if (status === "ML Server Offline") return '#facc15'; // warning
+    if (riskLevel === 2) return '#ff716c'; // error
+    if (riskLevel === 1) return '#facc15'; // warning
+    return 'var(--seafoam)'; // green
+  };
 
-  const alerts = [
-    { id: 1, type: 'CRITICAL', title: 'Dissolved Oxygen Flux', time: '02:14 PM', desc: 'Zone B monitoring detect DO drop to 4.2 mg/L. AI adjusting aerators.', color: COLORS.error },
-    { id: 2, type: 'WARNING', title: 'Salinity Gradient Shift', time: '01:55 PM', desc: 'Zuari estuary inflow increasing salinity. Stability within 5% variance.', color: COLORS.warning },
-    { id: 3, type: 'NORMAL', title: 'Biomass Prediction Sync', time: '01:30 PM', desc: 'Scan complete. Stock development proceeding at accelerated rate.', color: COLORS.secondary }
-  ];
+  const getRiskText = () => {
+    if (isWaiting) return "Computing...";
+    if (riskLevel === 2) return "High Risk";
+    if (riskLevel === 1) return "Medium Risk";
+    return "Safe";
+  };
+
+  const getRiskColor = () => {
+    if (isWaiting) return 'rgba(255,255,255,0.5)';
+    if (riskLevel === 2) return '#ff716c';
+    if (riskLevel === 1) return '#facc15';
+    return 'var(--seafoam)';
+  };
+
+  const modalTitle = species === "Tilapia" ? "TILAPIA" : "Asian seabass";
+  const tempRange = species === "Tilapia" ? "24–30°C" : "26–32°C";
+  const phRange = species === "Tilapia" ? "6.5 – 9" : "7 – 8.5";
+  const turbRange = species === "Tilapia" ? "< 25 NTU" : "< 20 NTU";
 
   return (
-    <div style={{ 
-      color: COLORS.textPrimary, 
-      fontFamily: "'Inter', sans-serif",
-      position: 'relative',
-      overflow: 'hidden'
-    }}>
-      {/* Background Bioluminescent Glows */}
-      <div style={{ position: 'absolute', top: '-100px', left: '-100px', width: '400px', height: '400px', background: 'radial-gradient(circle, rgba(161, 250, 255, 0.05) 0%, transparent 70%)', filter: 'blur(60px)', pointerEvents: 'none' }} />
-      <div style={{ position: 'absolute', bottom: '10%', right: '0', width: '500px', height: '500px', background: 'radial-gradient(circle, rgba(115, 241, 231, 0.03) 0%, transparent 70%)', filter: 'blur(80px)', pointerEvents: 'none' }} />
-
-      <div style={{ display: 'grid', gridTemplateColumns: '7fr 3fr', gap: '30px' }}>
+    <>
+      <motion.div 
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="glass-deep"
+        style={{
+          backgroundColor: 'rgba(25, 39, 52, 0.4)',
+          padding: '20px 24px',
+          borderRadius: '16px',
+          marginBottom: '16px',
+          color: '#fff',
+          fontFamily: "'Inter', sans-serif",
+          border: '1px solid rgba(255,255,255,0.08)',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
+          position: 'relative',
+          overflow: 'hidden',
+          transition: 'transform 0.2s, box-shadow 0.2s',
+          cursor: 'default'
+        }}
+        whileHover={{ y: -2, boxShadow: '0 12px 40px rgba(0,0,0,0.3)', border: `1px solid ${getRiskColor()}50` }}
+      >
+        <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: '4px', background: getRiskColor() }} />
         
-        {/* LEFT COLUMN: SENSORS & PREDICTIONS */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
-
-          {/* 2. AI Species Prediction Panel */}
-          <section className="glass-deep" style={{ 
-            padding: '30px', 
-            borderRadius: '24px', 
-            background: COLORS.surfaceVariant, 
-            backdropFilter: 'blur(20px)',
-            border: `1px solid rgba(161, 250, 255, 0.1)`,
-          }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px' }}>
-              <h3 style={{ fontSize: '0.85rem', color: COLORS.primary, letterSpacing: '3px', margin: 0, display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <BrainCircuit size={18} /> SPECIES PREDICTION ENGINE
-              </h3>
-              <div style={{ background: 'rgba(161, 250, 255, 0.05)', padding: '5px 15px', borderRadius: '50px', fontSize: '0.6rem', fontWeight: '900', color: COLORS.primary, border: `1px solid ${COLORS.primaryGlow}` }}>
-                AI MODEL: AQUA-NET v3
-              </div>
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-              {speciesPredictions.map((species, idx) => (
-                <motion.div 
-                  key={species.id}
-                  whileHover={{ x: 10, backgroundColor: 'rgba(161, 250, 255, 0.05)' }}
-                  onClick={() => setSelectedSpecies(species.id)}
-                  style={{ 
-                    padding: '20px', 
-                    borderRadius: '16px', 
-                    background: 'rgba(14, 27, 38, 0.3)', 
-                    border: '1px solid rgba(255,255,255,0.05)',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '20px'
-                  }}
-                >
-                  <div style={{ width: '60px', height: '60px', borderRadius: '12px', background: 'rgba(0,0,0,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Fish size={32} color={idx === 0 ? COLORS.primary : COLORS.textSecondary} />
-                  </div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5px' }}>
-                      <h4 style={{ margin: 0, fontSize: '1.1rem', letterSpacing: '0.5px' }}>{species.name}</h4>
-                      <span style={{ fontSize: '0.7rem', fontWeight: '900', color: species.status === 'OPTIMAL' ? COLORS.secondary : COLORS.warning }}>{species.status}</span>
-                    </div>
-                    <p style={{ margin: 0, fontSize: '0.75rem', color: COLORS.textSecondary, lineHeight: 1.4 }}>{species.description}</p>
-                  </div>
-                  <div style={{ textAlign: 'right', minWidth: '80px' }}>
-                    <div style={{ fontSize: '1.4rem', fontWeight: '900', color: idx === 0 ? COLORS.primary : '#fff' }}>{species.confidence}%</div>
-                    <div style={{ fontSize: '0.6rem', color: COLORS.textSecondary, fontWeight: '800' }}>AI MATCH</div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </section>
-
-          {/* 3. Historical Data Area */}
-          <section className="glass-deep" style={{ 
-            padding: '30px', 
-            borderRadius: '24px', 
-            background: COLORS.surfaceVariant, 
-            backdropFilter: 'blur(20px)',
-            border: `1px solid rgba(161, 250, 255, 0.1)`,
-            height: '350px'
-          }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px' }}>
-              <h3 style={{ fontSize: '0.85rem', color: COLORS.primary, letterSpacing: '3px', margin: 0, display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <TrendingUp size={18} /> BIO-STABILITY OVERVIEW (24H)
-              </h3>
-            </div>
-            <div style={{ height: '240px', width: '100%' }}>
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={mockTrendData}>
-                  <defs>
-                    <linearGradient id="colorPrimary" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor={COLORS.primary} stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor={COLORS.primary} stopOpacity={0}/>
-                    </linearGradient>
-                    <linearGradient id="colorSecondary" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor={COLORS.secondary} stopOpacity={0.2}/>
-                      <stop offset="95%" stopColor={COLORS.secondary} stopOpacity={0}/>
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke={COLORS.surface} vertical={false} />
-                  <XAxis dataKey="time" stroke={COLORS.textSecondary} fontSize={10} tick={{ fill: COLORS.textSecondary }} axisLine={false} tickLine={false} />
-                  <YAxis stroke={COLORS.textSecondary} fontSize={10} tick={{ fill: COLORS.textSecondary }} axisLine={false} tickLine={false} />
-                  <Tooltip 
-                    contentStyle={{ background: COLORS.surface, border: `1px solid ${COLORS.primaryGlow}`, borderRadius: '12px', color: '#fff' }}
-                  />
-                  <Area type="monotone" dataKey="salinity" stroke={COLORS.primary} fillOpacity={1} fill="url(#colorPrimary)" strokeWidth={3} />
-                  <Area type="monotone" dataKey="oxygen" stroke={COLORS.secondary} fillOpacity={1} fill="url(#colorSecondary)" strokeWidth={2} />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-          </section>
-
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span style={{ fontWeight: '800', fontSize: '1.1rem', color: '#fff', letterSpacing: '0.5px' }}>
+            Species: <span style={{ color: 'var(--primary)' }}>{species}</span>
+          </span>
+          <button 
+            onClick={() => setShowModal(true)}
+            style={{ 
+              background: 'rgba(255,255,255,0.05)', 
+              border: '1px solid rgba(255,255,255,0.1)', 
+              cursor: 'pointer', 
+              padding: '6px',
+              borderRadius: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'background 0.2s'
+            }} 
+            title="Show Safe Ranges"
+            onMouseOver={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
+            onMouseOut={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
+          >
+            <Info size={18} color="var(--primary)" />
+          </button>
         </div>
 
-        {/* RIGHT COLUMN: AI COMMANDER & ALERTS */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
-          
-          {/* 4. AI Commander AXON */}
-          <section className="glass-deep" style={{ 
-            padding: '30px', 
-            borderRadius: '24px', 
-            background: `linear-gradient(135deg, ${COLORS.surface}, rgba(6, 15, 24, 0.8))`, 
-            border: `2px solid ${COLORS.primary}`,
-            position: 'relative',
-            overflow: 'hidden'
+        <div style={{ display: 'flex', alignItems: 'center', marginTop: '16px', gap: '10px' }}>
+          <BrainCircuit size={18} color="var(--primary)" style={{ opacity: 0.8 }} />
+          <span style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 700 }}>ML Prediction: </span>
+          {isWaiting ? (
+            <div className="spinner" style={{ width: '14px', height: '14px', border: '2px solid rgba(255,255,255,0.1)', borderTopColor: 'var(--primary)', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+          ) : (
+            <span style={{ fontWeight: '800', color: getStatusColor(), fontSize: '0.95rem' }}>{status}</span>
+          )}
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', marginTop: '10px', gap: '10px' }}>
+          <ShieldPlus size={18} color="var(--text-secondary)" style={{ opacity: 0.8 }} />
+          <span style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 700 }}>Status: </span>
+          <span style={{ 
+            fontWeight: '800', 
+            color: getRiskColor(), 
+            fontSize: '0.75rem',
+            background: `${getRiskColor()}15`,
+            padding: '4px 10px',
+            borderRadius: '6px',
+            border: `1px solid ${getRiskColor()}30`,
+            textTransform: 'uppercase',
+            letterSpacing: '0.5px'
           }}>
-             <div style={{ position: 'absolute', top: '-50px', right: '-50px', width: '120px', height: '120px', background: COLORS.primary, filter: 'blur(70px)', opacity: 0.15 }} />
-             <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '25px' }}>
-                <div style={{ 
-                  width: '50px', 
-                  height: '50px', 
-                  borderRadius: '12px', 
-                  background: COLORS.primaryGlow, 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'center',
-                  border: `1px solid ${COLORS.primary}`
-                }}>
-                  <Cpu size={24} color={COLORS.primary} className="biolume-pulse" />
+            {getRiskText()}
+          </span>
+        </div>
+      </motion.div>
+
+      <AnimatePresence>
+        {showModal && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            style={{
+              position: 'fixed',
+              top: 0, left: 0, right: 0, bottom: 0,
+              backgroundColor: 'rgba(0,12,17,0.8)',
+              backdropFilter: 'blur(10px)',
+              zIndex: 9999,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontFamily: "'Inter', sans-serif"
+            }}
+            onClick={() => setShowModal(false)}
+          >
+            <motion.div 
+              initial={{ scale: 0.95, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 20 }}
+              onClick={(e) => e.stopPropagation()}
+              className="glass-deep"
+              style={{
+                backgroundColor: 'rgba(25, 39, 52, 0.9)',
+                borderRadius: '24px',
+                width: '90%',
+                maxWidth: '420px',
+                padding: '30px',
+                color: '#fff',
+                boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
+                border: '1px solid rgba(255,255,255,0.1)'
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px' }}>
+                <div style={{ padding: '12px', background: 'rgba(0, 242, 195, 0.1)', borderRadius: '12px', color: 'var(--seafoam)' }}>
+                  <ShieldPlus size={28} />
                 </div>
                 <div>
-                   <h3 style={{ fontSize: '0.9rem', color: '#fff', letterSpacing: '2px', margin: 0 }}>AI COMMANDER</h3>
-                   <div style={{ fontSize: '0.6rem', color: COLORS.primary, fontWeight: '900' }}>AGENT AXON-7 // ACTIVE</div>
-                </div>
-             </div>
-             <p style={{ 
-               fontSize: '0.85rem', 
-               color: COLORS.textPrimary, 
-               lineHeight: 1.6, 
-               margin: '0 0 20px',
-               fontStyle: 'italic',
-               background: 'rgba(161, 250, 255, 0.03)',
-               padding: '15px',
-               borderRadius: '12px',
-               borderLeft: `2px solid ${COLORS.primary}`
-             }}>
-               "Current environmental metrics are stable, however, predicted metabolic shifts in the nursery quadrant suggest a 0.5 unit pH adjustment within 4 hours. Recommend proactive oxygenation increase."
-             </p>
-             <button className="btn-premium" style={{ width: '100%', borderRadius: '12px', padding: '12px', fontSize: '0.75rem' }}>
-               EXECUTE PROTOCOLS
-             </button>
-          </section>
-
-          {/* 5. Mission Control Alerts */}
-          <section className="glass-deep" style={{ 
-            padding: '30px', 
-            borderRadius: '24px', 
-            background: COLORS.surfaceVariant, 
-            backdropFilter: 'blur(20px)',
-            border: `1px solid rgba(161, 250, 255, 0.1)`,
-            flex: 1
-          }}>
-            <h3 style={{ fontSize: '0.85rem', color: COLORS.primary, letterSpacing: '3px', marginBottom: '25px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <ShieldAlert size={18} /> MISSION LOGS
-            </h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-              {alerts.map(alert => (
-                <div key={alert.id} style={{ 
-                  padding: '15px', 
-                  borderRadius: '16px', 
-                  background: 'rgba(6, 15, 24, 0.4)', 
-                  border: `1px solid ${alert.color}22`,
-                  position: 'relative'
-                }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                    <span style={{ fontSize: '0.6rem', fontWeight: '900', color: alert.color, letterSpacing: '1px' }}>[{alert.type}]</span>
-                    <span style={{ fontSize: '0.6rem', color: COLORS.textSecondary }}>{alert.time}</span>
+                  <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', color: '#fff' }}>
+                    SAFE RANGE
+                  </h2>
+                  <div style={{ fontSize: '0.8rem', color: 'var(--seafoam)', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', marginTop: '4px' }}>
+                    {modalTitle}
                   </div>
-                  <h4 style={{ margin: '0 0 5px', fontSize: '0.9rem', color: '#fff' }}>{alert.title}</h4>
-                  <p style={{ margin: 0, fontSize: '0.7rem', color: COLORS.textSecondary, lineHeight: 1.4 }}>{alert.desc}</p>
                 </div>
-              ))}
-            </div>
-          </section>
+              </div>
 
-          {/* 6. Geo-Context HUD */}
-          <section className="glass-deep" style={{ 
-            padding: '30px', 
-            borderRadius: '24px', 
-            background: COLORS.surfaceVariant, 
-            backdropFilter: 'blur(20px)',
-            border: `1px solid rgba(161, 250, 255, 0.1)`,
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '15px' }}>
-               <MapPin size={20} color={COLORS.secondary} />
-               <span style={{ fontSize: '0.7rem', fontWeight: '900', letterSpacing: '2px', color: COLORS.textSecondary }}>GEO-COORDINATES</span>
-            </div>
-            <div style={{ fontSize: '1.2rem', fontWeight: '900', color: '#fff', marginBottom: '5px' }}>ZUARI ESTUARY, GOA</div>
-            <div style={{ fontSize: '0.65rem', color: COLORS.secondary, letterSpacing: '1px', marginBottom: '15px' }}>15°24'N 73°48'E // DEPTH: 14M</div>
-            <p style={{ margin: 0, opacity: 0.8, lineHeight: 1.5, fontSize: '0.75rem', color: COLORS.textSecondary }}>
-              Zonal turbulence is nominal. Local biomass density is at 88% capacity.
-            </p>
-          </section>
+              <div style={{ background: 'rgba(0,0,0,0.3)', borderRadius: '12px', padding: '16px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
+                  <thead>
+                    <tr>
+                      <th style={{ textAlign: 'left', padding: '0 0 12px 0', color: 'var(--text-secondary)', borderBottom: '1px solid rgba(255,255,255,0.1)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Parameter</th>
+                      <th style={{ textAlign: 'left', padding: '0 0 12px 0', color: 'var(--text-secondary)', borderBottom: '1px solid rgba(255,255,255,0.1)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Safe Zone</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td style={{ padding: '16px 0', borderBottom: '1px solid rgba(255,255,255,0.05)', color: '#fff' }}>Temperature</td>
+                      <td style={{ padding: '16px 0', borderBottom: '1px solid rgba(255,255,255,0.05)', fontWeight: 800, color: 'var(--seafoam)' }}>{tempRange}</td>
+                    </tr>
+                    <tr>
+                      <td style={{ padding: '16px 0', borderBottom: '1px solid rgba(255,255,255,0.05)', color: '#fff' }}>pH Level</td>
+                      <td style={{ padding: '16px 0', borderBottom: '1px solid rgba(255,255,255,0.05)', fontWeight: 800, color: 'var(--seafoam)' }}>{phRange}</td>
+                    </tr>
+                    <tr>
+                      <td style={{ padding: '16px 0', color: '#fff' }}>Turbidity</td>
+                      <td style={{ padding: '16px 0', fontWeight: 800, color: 'var(--seafoam)' }}>{turbRange}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
 
-        </div>
+              <div style={{ display: 'flex', justifyContent: 'center', marginTop: '30px' }}>
+                <button 
+                  onClick={() => setShowModal(false)}
+                  className="btn-premium-outline"
+                  style={{
+                    width: '100%',
+                    padding: '12px 24px',
+                    justifyContent: 'center',
+                    fontSize: '0.85rem'
+                  }}
+                >
+                  CLOSE WINDOW
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <style>{`
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+      `}</style>
+    </>
+  );
+};
 
-      </div>
+const FishInsights = ({ sensorData }) => {
+  if (!sensorData) return null;
+  return (
+    <div style={{ width: '100%', maxWidth: '900px', margin: '0 auto' }}>
+      <RiskProfile species="Tilapia" sensorData={sensorData} />
+      <RiskProfile species="Asian Seabass" sensorData={sensorData} />
     </div>
   );
 };
