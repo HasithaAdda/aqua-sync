@@ -433,105 +433,103 @@ export default function IncidentReporting({ role, userLocation }) {
                     display: 'flex', 
                     gap: '24px', 
                     padding: '24px', 
-                    background: '#f0f4f8', 
+                    background: 'transparent', 
                     fontFamily: "'Inter', sans-serif",
                     overflow: 'hidden'
                 }}>
                     
                     {/* LEFT SIDE: REPORT FORM */}
-                    <div style={{ 
+                    <div className="glass-deep" style={{ 
                         flex: '0 0 65%', 
-                        background: '#ffffff', 
-                        borderRadius: '12px', 
-                        boxShadow: '0 4px 20px rgba(0,0,0,0.05)', 
+                        borderRadius: '24px', 
                         display: 'flex', 
                         flexDirection: 'column',
                         overflow: 'hidden',
-                        border: '1px solid #e2e8f0'
+                        border: '1px solid rgba(255,255,255,0.08)'
                     }}>
                         {/* Header */}
-                        <div style={{ padding: '20px 30px', borderBottom: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                            <div style={{ padding: '8px', background: '#e0f2fe', borderRadius: '8px', color: '#0284c7' }}>
+                        <div style={{ padding: '20px 30px', borderBottom: '1px solid rgba(255,255,255,0.08)', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <div style={{ padding: '8px', background: 'rgba(0, 242, 195, 0.1)', borderRadius: '8px', color: 'var(--seafoam)' }}>
                                 <AlertCircle size={20} />
                             </div>
-                            <h2 style={{ margin: 0, fontSize: '1.25rem', color: '#0f172a', fontWeight: 700 }}>Report Incident</h2>
+                            <h2 style={{ margin: 0, fontSize: '1.25rem', color: '#fff', fontWeight: 700 }}>REPORT INCIDENT</h2>
                         </div>
 
                         {/* Form Body */}
                         <div style={{ flex: 1, overflowY: 'auto', padding: '30px' }}>
                             {isSuccess ? (
                                 <div style={{ textAlign: 'center', padding: '60px 20px' }}>
-                                    <CheckCircle size={64} color="#0284c7" style={{ margin: '0 auto 20px' }} />
-                                    <h3 style={{ fontSize: '1.5rem', color: '#0f172a', marginBottom: '10px' }}>Report Submitted Successfully</h3>
-                                    <p style={{ color: '#64748b' }}>Your report has been sent to the maritime authorities.</p>
+                                    <CheckCircle size={64} color="var(--seafoam)" style={{ margin: '0 auto 20px' }} />
+                                    <h3 style={{ fontSize: '1.5rem', color: '#fff', marginBottom: '10px' }}>Report Submitted Successfully</h3>
+                                    <p style={{ color: 'var(--text-secondary)' }}>Your report has been sent to the maritime authorities.</p>
                                 </div>
                             ) : (
                                 <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                                     
                                     {/* Safety Alert */}
-                                    <div style={{ background: '#fffbeb', border: '1px solid #fef3c7', padding: '16px 20px', borderRadius: '8px', display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-                                        <Shield size={20} color="#d97706" style={{ flexShrink: 0, marginTop: '2px' }} />
-                                        <p style={{ margin: 0, fontSize: '0.875rem', color: '#92400e', lineHeight: 1.5 }}>
+                                    <div style={{ background: 'rgba(0, 242, 195, 0.15)', border: '1px solid rgba(0, 242, 195, 0.3)', padding: '16px 20px', borderRadius: '12px', display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+                                        <Shield size={20} color="var(--seafoam)" style={{ flexShrink: 0, marginTop: '2px' }} />
+                                        <p style={{ margin: 0, fontSize: '0.875rem', color: '#fff', lineHeight: 1.5, letterSpacing: '0.3px' }}>
                                             Your safety is our priority. If you feel threatened, please submit the report anonymously. Do not approach suspicious vessels directly.
                                         </p>
                                     </div>
 
                                     {/* Anonymous Toggle */}
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 20px', border: '1px solid #e2e8f0', borderRadius: '8px', background: '#f8fafc' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 20px', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px', background: 'rgba(255,255,255,0.02)' }}>
                                         <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                                            <Shield size={20} color="#64748b" />
+                                            <Shield size={20} color="var(--text-secondary)" />
                                             <div>
-                                                <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#0f172a' }}>Submit Anonymously</div>
-                                                <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Your name will be hidden from the authorities.</div>
+                                                <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#fff' }}>Submit Anonymously</div>
+                                                <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)' }}>Your name will be hidden from the authorities.</div>
                                             </div>
                                         </div>
                                         <label className="switch" style={{ margin: 0 }}>
                                             <input type="checkbox" name="isAnonymous" checked={formData.isAnonymous} onChange={handleInputChange} />
-                                            <span className="slider round" style={{ background: formData.isAnonymous ? '#0284c7' : '#cbd5e1' }}></span>
+                                            <span className="slider round" style={{ background: formData.isAnonymous ? 'var(--seafoam)' : 'rgba(255,255,255,0.2)' }}></span>
                                         </label>
                                     </div>
 
                                     {/* Contact Number */}
                                     <div style={{ position: 'relative' }}>
-                                        <Phone size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
+                                        <Phone size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-secondary)' }} />
                                         <input
                                             type="text"
                                             name="phone"
                                             placeholder="Contact Number"
                                             value={formData.phone}
                                             onChange={handleInputChange}
-                                            style={{ width: '100%', padding: '14px 16px 14px 44px', border: '1px solid #cbd5e1', borderRadius: '8px', fontSize: '0.9rem', color: '#0f172a', outline: 'none' }}
+                                            style={{ width: '100%', padding: '14px 16px 14px 44px', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', fontSize: '0.9rem', color: '#fff', outline: 'none', background: 'rgba(0,0,0,0.3)' }}
                                         />
                                     </div>
 
                                     {/* Vessel Information Section */}
                                     <div>
-                                        <h3 style={{ fontSize: '0.9rem', fontWeight: 700, color: '#0f172a', marginBottom: '12px' }}>Vessel Information</h3>
+                                        <h3 style={{ fontSize: '0.9rem', fontWeight: 700, color: '#fff', marginBottom: '12px', letterSpacing: '1px' }}>VESSEL INFORMATION</h3>
                                         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                                             <div style={{ position: 'relative' }}>
-                                                <Ship size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
+                                                <Ship size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-secondary)' }} />
                                                 <select
                                                     name="vesselType"
                                                     value={formData.vesselType}
                                                     onChange={handleInputChange}
                                                     required
-                                                    style={{ width: '100%', padding: '14px 16px 14px 44px', border: '1px solid #cbd5e1', borderRadius: '8px', fontSize: '0.9rem', color: '#0f172a', outline: 'none', appearance: 'none', background: '#fff' }}
+                                                    style={{ width: '100%', padding: '14px 16px 14px 44px', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', fontSize: '0.9rem', color: '#fff', outline: 'none', appearance: 'none', background: 'rgba(0,0,0,0.3)' }}
                                                 >
-                                                    <option value="">Vessel Type</option>
-                                                    {VESSEL_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                                                    <option value="" style={{ color: '#000' }}>Vessel Type</option>
+                                                    {VESSEL_TYPES.map(t => <option key={t} value={t} style={{ color: '#000' }}>{t}</option>)}
                                                 </select>
                                             </div>
                                             <div style={{ position: 'relative' }}>
-                                                <AlertTriangle size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
+                                                <AlertTriangle size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-secondary)' }} />
                                                 <select
                                                     name="activityType"
                                                     value={formData.activityType}
                                                     onChange={handleInputChange}
                                                     required
-                                                    style={{ width: '100%', padding: '14px 16px 14px 44px', border: '1px solid #cbd5e1', borderRadius: '8px', fontSize: '0.9rem', color: '#0f172a', outline: 'none', appearance: 'none', background: '#fff' }}
+                                                    style={{ width: '100%', padding: '14px 16px 14px 44px', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', fontSize: '0.9rem', color: '#fff', outline: 'none', appearance: 'none', background: 'rgba(0,0,0,0.3)' }}
                                                 >
-                                                    <option value="">Type of Suspicious Activity</option>
-                                                    {ACTIVITY_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                                                    <option value="" style={{ color: '#000' }}>Type of Suspicious Activity</option>
+                                                    {ACTIVITY_TYPES.map(t => <option key={t} value={t} style={{ color: '#000' }}>{t}</option>)}
                                                 </select>
                                             </div>
                                             <textarea
@@ -540,22 +538,22 @@ export default function IncidentReporting({ role, userLocation }) {
                                                 value={formData.description}
                                                 onChange={handleInputChange}
                                                 required
-                                                style={{ width: '100%', padding: '16px', border: '1px solid #cbd5e1', borderRadius: '8px', fontSize: '0.9rem', color: '#0f172a', outline: 'none', minHeight: '120px', resize: 'vertical' }}
+                                                style={{ width: '100%', padding: '16px', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', fontSize: '0.9rem', color: '#fff', outline: 'none', minHeight: '120px', resize: 'vertical', background: 'rgba(0,0,0,0.3)' }}
                                             />
                                         </div>
                                     </div>
 
                                     {/* Evidence Section */}
                                     <div>
-                                        <h3 style={{ fontSize: '0.9rem', fontWeight: 700, color: '#0f172a', marginBottom: '12px' }}>Evidence</h3>
+                                        <h3 style={{ fontSize: '0.9rem', fontWeight: 700, color: '#fff', marginBottom: '12px', letterSpacing: '1px' }}>EVIDENCE</h3>
                                         <input type="file" accept="image/*" ref={fileInputRef} style={{ display: 'none' }} onChange={handleImageChange} />
                                         <div 
                                             onClick={handleImageClick}
                                             style={{ 
                                                 width: '100%', 
-                                                border: '1px dashed #cbd5e1', 
-                                                background: '#f8fafc', 
-                                                borderRadius: '8px', 
+                                                border: '1px dashed rgba(255,255,255,0.2)', 
+                                                background: 'rgba(255,255,255,0.02)', 
+                                                borderRadius: '12px', 
                                                 padding: imagePreview ? '8px' : '40px 20px',
                                                 display: 'flex', 
                                                 flexDirection: 'column', 
@@ -566,7 +564,7 @@ export default function IncidentReporting({ role, userLocation }) {
                                             }}
                                         >
                                             {imagePreview ? (
-                                                <div style={{ position: 'relative', width: '100%', height: '200px', borderRadius: '4px', overflow: 'hidden' }}>
+                                                <div style={{ position: 'relative', width: '100%', height: '200px', borderRadius: '8px', overflow: 'hidden' }}>
                                                     <img src={imagePreview} alt="Evidence" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                                     <button 
                                                         type="button" onClick={removeImage}
@@ -575,8 +573,8 @@ export default function IncidentReporting({ role, userLocation }) {
                                                 </div>
                                             ) : (
                                                 <>
-                                                    <Camera size={32} color="#94a3b8" style={{ marginBottom: '12px' }} />
-                                                    <span style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 500 }}>Tap to take a photo of the vessel</span>
+                                                    <Camera size={32} color="var(--text-secondary)" style={{ marginBottom: '12px' }} />
+                                                    <span style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)', fontWeight: 500 }}>Tap to take a photo of the vessel</span>
                                                 </>
                                             )}
                                         </div>
@@ -584,14 +582,14 @@ export default function IncidentReporting({ role, userLocation }) {
 
                                     {/* Voice Evidence Section */}
                                     <div>
-                                        <h3 style={{ fontSize: '0.9rem', fontWeight: 700, color: '#0f172a', marginBottom: '12px' }}>Voice Evidence</h3>
+                                        <h3 style={{ fontSize: '0.9rem', fontWeight: 700, color: '#fff', marginBottom: '12px', letterSpacing: '1px' }}>VOICE EVIDENCE</h3>
                                         <div 
                                             onClick={toggleSpeechRecognition}
                                             style={{ 
                                                 width: '100%', 
-                                                border: `1px solid ${isRecording ? '#0284c7' : '#cbd5e1'}`, 
-                                                background: isRecording ? '#f0f9ff' : '#f8fafc', 
-                                                borderRadius: '8px', 
+                                                border: `1px solid ${isRecording ? 'var(--seafoam)' : 'rgba(255,255,255,0.1)'}`, 
+                                                background: isRecording ? 'rgba(0, 242, 195, 0.05)' : 'rgba(0,0,0,0.3)', 
+                                                borderRadius: '12px', 
                                                 padding: '16px 20px',
                                                 display: 'flex', 
                                                 alignItems: 'center', 
@@ -600,8 +598,8 @@ export default function IncidentReporting({ role, userLocation }) {
                                                 transition: 'all 0.2s'
                                             }}
                                         >
-                                            <Mic size={20} color={isRecording ? '#0284c7' : '#0ea5e9'} className={isRecording ? 'pulse-blue-anim' : ''} />
-                                            <span style={{ fontSize: '0.85rem', color: isRecording ? '#0284c7' : '#64748b', fontWeight: 600 }}>
+                                            <Mic size={20} color={isRecording ? 'var(--seafoam)' : 'var(--text-secondary)'} className={isRecording ? 'biolume-pulse' : ''} />
+                                            <span style={{ fontSize: '0.85rem', color: isRecording ? 'var(--seafoam)' : 'rgba(255,255,255,0.6)', fontWeight: 600 }}>
                                                 {isRecording ? 'Recording... Tap to stop' : 'Tap to record voice evidence'}
                                             </span>
                                         </div>
@@ -609,9 +607,9 @@ export default function IncidentReporting({ role, userLocation }) {
 
                                     {/* Location Section */}
                                     <div>
-                                        <h3 style={{ fontSize: '0.9rem', fontWeight: 700, color: '#0f172a', marginBottom: '12px' }}>Location</h3>
+                                        <h3 style={{ fontSize: '0.9rem', fontWeight: 700, color: '#fff', marginBottom: '12px', letterSpacing: '1px' }}>LOCATION</h3>
                                         <div style={{ position: 'relative' }}>
-                                            <MapPin size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
+                                            <MapPin size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-secondary)' }} />
                                             <input
                                                 type="text"
                                                 name="locationName"
@@ -620,9 +618,9 @@ export default function IncidentReporting({ role, userLocation }) {
                                                 onChange={handleInputChange}
                                                 required
                                                 autoComplete="off"
-                                                style={{ width: '100%', padding: '14px 16px 14px 44px', border: '1px solid #cbd5e1', borderRadius: '8px', fontSize: '0.9rem', color: '#0f172a', outline: 'none' }}
+                                                style={{ width: '100%', padding: '14px 16px 14px 44px', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', fontSize: '0.9rem', color: '#fff', outline: 'none', background: 'rgba(0,0,0,0.3)' }}
                                             />
-                                            <Target size={18} style={{ position: 'absolute', right: '16px', top: '50%', transform: 'translateY(-50%)', color: '#0284c7' }} />
+                                            <Target size={18} style={{ position: 'absolute', right: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--seafoam)' }} />
                                             
                                             {/* Suggestions Dropdown */}
                                             {locationSuggestions.length > 0 && (
@@ -631,12 +629,12 @@ export default function IncidentReporting({ role, userLocation }) {
                                                     top: '100%',
                                                     left: 0,
                                                     right: 0,
-                                                    background: '#fff',
-                                                    border: '1px solid #cbd5e1',
-                                                    borderRadius: '8px',
+                                                    background: 'rgba(0, 12, 17, 0.95)',
+                                                    border: '1px solid rgba(255,255,255,0.1)',
+                                                    borderRadius: '12px',
                                                     marginTop: '4px',
                                                     zIndex: 1000,
-                                                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                                                    backdropFilter: 'blur(10px)',
                                                     maxHeight: '200px',
                                                     overflowY: 'auto'
                                                 }}>
@@ -647,11 +645,13 @@ export default function IncidentReporting({ role, userLocation }) {
                                                             style={{
                                                                 padding: '12px 16px',
                                                                 fontSize: '0.85rem',
-                                                                color: '#0f172a',
+                                                                color: '#fff',
                                                                 cursor: 'pointer',
-                                                                borderBottom: index === locationSuggestions.length - 1 ? 'none' : '1px solid #f1f5f9',
+                                                                borderBottom: index === locationSuggestions.length - 1 ? 'none' : '1px solid rgba(255,255,255,0.05)',
                                                                 transition: 'background 0.2s'
                                                             }}
+                                                            onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
+                                                            onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
                                                         >
                                                             {suggestion.display_name}
                                                         </div>
@@ -660,7 +660,7 @@ export default function IncidentReporting({ role, userLocation }) {
                                             )}
                                             {isSearchingLocation && (
                                                 <div style={{ position: 'absolute', right: '44px', top: '50%', transform: 'translateY(-50%)' }}>
-                                                    <div className="spinner-small" style={{ width: '16px', height: '16px', border: '2px solid #cbd5e1', borderTopColor: '#0284c7', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+                                                    <div className="spinner-small" style={{ width: '16px', height: '16px', border: '2px solid rgba(255,255,255,0.1)', borderTopColor: 'var(--seafoam)', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
                                                 </div>
                                             )}
                                         </div>
@@ -670,26 +670,23 @@ export default function IncidentReporting({ role, userLocation }) {
                                     <button
                                         type="submit"
                                         disabled={isSubmitting}
+                                        className="btn-premium"
                                         style={{
                                             width: '100%',
                                             padding: '16px',
-                                            background: '#0284c7', // Blue theme submit
-                                            color: '#fff',
-                                            border: 'none',
-                                            borderRadius: '8px',
+                                            borderRadius: '12px',
                                             fontSize: '1rem',
-                                            fontWeight: 700,
+                                            fontWeight: 800,
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'center',
-                                            gap: '8px',
+                                            gap: '10px',
                                             cursor: isSubmitting ? 'not-allowed' : 'pointer',
-                                            transition: 'background 0.2s',
                                             marginTop: '10px'
                                         }}
                                     >
                                         <Send size={18} />
-                                        {isSubmitting ? 'Submitting...' : 'Submit Report to Authorities'}
+                                        {isSubmitting ? 'SUBMITTING...' : 'SUBMIT REPORT TO AUTHORITIES'}
                                     </button>
                                 </form>
                             )}
@@ -697,31 +694,29 @@ export default function IncidentReporting({ role, userLocation }) {
                     </div>
 
                     {/* RIGHT SIDE: MY REPORTS (ACKNOWLEDGED) */}
-                    <div style={{ 
+                    <div className="glass-deep" style={{ 
                         flex: '0 0 35%', 
-                        background: '#ffffff', 
-                        borderRadius: '12px', 
-                        boxShadow: '0 4px 20px rgba(0,0,0,0.05)', 
+                        borderRadius: '24px', 
                         display: 'flex', 
                         flexDirection: 'column',
                         overflow: 'hidden',
-                        border: '1px solid #e2e8f0'
+                        border: '1px solid rgba(255,255,255,0.08)'
                     }}>
-                        <div style={{ padding: '20px 30px', borderBottom: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <div style={{ padding: '20px 30px', borderBottom: '1px solid rgba(255,255,255,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                <div style={{ padding: '8px', background: '#e0f2fe', borderRadius: '8px', color: '#0284c7' }}>
+                                <div style={{ padding: '8px', background: 'rgba(0, 242, 195, 0.1)', borderRadius: '8px', color: 'var(--seafoam)' }}>
                                     <History size={20} />
                                 </div>
-                                <h2 style={{ margin: 0, fontSize: '1.25rem', color: '#0f172a', fontWeight: 700 }}>My Reports</h2>
+                                <h2 style={{ margin: 0, fontSize: '1.25rem', color: '#fff', fontWeight: 700 }}>MY REPORTS</h2>
                             </div>
-                            <span style={{ background: '#e0f2fe', color: '#0284c7', padding: '4px 10px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 700 }}>
+                            <span style={{ background: 'rgba(0, 242, 195, 0.1)', color: 'var(--seafoam)', padding: '4px 10px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 700 }}>
                                 {displayedReports.length} Acknowledged
                             </span>
                         </div>
 
                         <div style={{ flex: 1, overflowY: 'auto', padding: '20px' }}>
                             {displayedReports.length === 0 ? (
-                                <div style={{ textAlign: 'center', padding: '60px 20px', color: '#94a3b8' }}>
+                                <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text-secondary)' }}>
                                     <History size={48} style={{ opacity: 0.3, margin: '0 auto 16px' }} />
                                     <p style={{ fontSize: '1rem', fontWeight: 500, margin: 0 }}>No reports available.</p>
                                 </div>
@@ -734,48 +729,46 @@ export default function IncidentReporting({ role, userLocation }) {
                                                 initial={{ opacity: 0, y: 10 }}
                                                 animate={{ opacity: 1, y: 0 }}
                                                 style={{
-                                                    border: '1px solid #e2e8f0',
-                                                    borderRadius: '10px',
+                                                    border: '1px solid rgba(255,255,255,0.08)',
+                                                    borderRadius: '16px',
                                                     padding: '16px',
-                                                    background: '#f8fafc',
+                                                    background: 'rgba(255,255,255,0.02)',
                                                     position: 'relative',
                                                     overflow: 'hidden'
                                                 }}
                                             >
-                                                <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: '4px', background: report.status === 'Action Taken' ? '#22c55e' : report.status === 'Investigating' ? '#f59e0b' : '#0284c7' }} />
+                                                <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: '4px', background: report.status === 'Action Taken' ? '#22c55e' : report.status === 'Investigating' ? '#f59e0b' : 'var(--seafoam)' }} />
                                                 
                                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
                                                     <div style={{ paddingLeft: '8px' }}>
-                                                        <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 700, color: '#0f172a' }}>
+                                                        <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 700, color: '#fff' }}>
                                                             {report.activityType}
                                                         </h4>
                                                     </div>
                                                     <span style={{ 
                                                         display: 'flex', alignItems: 'center', gap: '4px',
-                                                        background: report.status === 'Action Taken' ? '#dcfce7' : report.status === 'Investigating' ? '#fef3c7' : '#e0f2fe',
-                                                        color: report.status === 'Action Taken' ? '#166534' : report.status === 'Investigating' ? '#92400e' : '#0284c7',
+                                                        background: report.status === 'Action Taken' ? 'rgba(34, 197, 94, 0.1)' : report.status === 'Investigating' ? 'rgba(245, 158, 11, 0.1)' : 'rgba(0, 242, 195, 0.1)',
+                                                        color: report.status === 'Action Taken' ? '#22c55e' : report.status === 'Investigating' ? '#f59e0b' : 'var(--seafoam)',
                                                         padding: '4px 8px', borderRadius: '6px', fontSize: '0.7rem', fontWeight: 600
                                                     }}>
                                                         {report.status}
                                                     </span>
                                                 </div>
                                                 
-                                                <div style={{ paddingLeft: '8px', fontSize: '0.8rem', color: '#64748b', marginBottom: '12px' }}>
-                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+                                                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', paddingLeft: '8px' }}>
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)' }}>
                                                         <Ship size={14} /> {report.vesselType}
                                                     </div>
-                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                                        <MapPin size={14} /> {report.locationName || 'N/A'}
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)' }}>
+                                                        <MapPin size={14} /> {report.locationName || 'Location Not Specified'}
                                                     </div>
-                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
-                                                        <Clock size={14} /> {report.timestamp?.toDate()?.toLocaleDateString() || 'Recently'}
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)' }}>
+                                                        <Clock size={14} /> {report.timestamp?.toDate()?.toLocaleDateString()}
                                                     </div>
                                                 </div>
 
-                                                <div style={{ paddingLeft: '8px', borderTop: '1px solid #e2e8f0', paddingTop: '12px' }}>
-                                                    <p style={{ margin: 0, fontSize: '0.8rem', color: '#334155', lineHeight: 1.5 }}>
-                                                        <strong>Authority Update:</strong> {report.aiAnalysis?.summary || "Report reviewed. Area is under surveillance."}
-                                                    </p>
+                                                <div style={{ marginTop: '16px', paddingTop: '12px', borderTop: '1px solid rgba(255,255,255,0.08)', fontSize: '0.85rem', color: 'rgba(255,255,255,0.8)' }}>
+                                                    <strong style={{ color: 'var(--seafoam)' }}>Authority Update:</strong> {report.aiAnalysis?.summary || "Automated analysis pending."}
                                                 </div>
                                             </motion.div>
                                         ))}

@@ -51,16 +51,7 @@ const GovtSchemes = () => {
   return (
     <div style={{ padding: '30px', color: '#fff', background: 'transparent' }}>
       {/* Header Widget */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', flexWrap: 'wrap', gap: '15px' }}>
-        <div>
-          <h2 style={{ fontSize: '1.6rem', fontWeight: '900', letterSpacing: '-0.5px', margin: 0 }}>
-            GOVERNMENT SCHEMES & SUBSIDIES
-          </h2>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '5px' }}>
-            Explore financial assistances and development programs by the Directorate of Fisheries, Goa
-          </p>
-        </div>
-
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '30px' }}>
         <a 
           href={officialLink} 
           target="_blank" 

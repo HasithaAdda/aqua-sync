@@ -324,7 +324,7 @@ const Hero = ({ onEnterApp }) => {
               variants={itemVariants}
               style={{ color: 'var(--text-secondary)', fontSize: '1rem', maxWidth: '400px', marginBottom: '15px', lineHeight: '1.6', opacity: 0.8 }}
             >
-              Track water quality, fish growth, and feeding schedules all in one intelligent, real-time dashboard designed for modern pisciculture
+              Track water quality, species recommendation, and disease prediction all in one intelligent, real-time dashboard designed for modern pisciculture
             </motion.p>
           </div>
 

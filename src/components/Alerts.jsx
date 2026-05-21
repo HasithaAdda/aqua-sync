@@ -157,15 +157,7 @@ const Alerts = ({ sensorData }) => {
   return (
     <div style={{ padding: '30px', color: '#fff', background: 'transparent' }}>
       {/* Header Widget */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
-        <div>
-          <h2 style={{ fontSize: '1.6rem', fontWeight: '900', letterSpacing: '-0.5px', margin: 0 }}>
-            REAL-TIME ALERTS & ACTION CENTRE
-          </h2>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '5px' }}>
-            Biosecurity recommendations based on live IoT sensor readings
-          </p>
-        </div>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '30px' }}>
 
         <div className="glass-card" style={{ padding: '10px 20px', borderRadius: '15px', display: 'flex', alignItems: 'center', gap: '10px' }}>
           <BellRing size={20} className={activeAlerts.length > 0 ? 'biolume-pulse' : ''} style={{ color: activeAlerts.length > 0 ? 'var(--seafoam)' : '#64748b' }} />
@@ -201,10 +193,7 @@ const Alerts = ({ sensorData }) => {
           }}>
             <CheckCircle size={40} color="#22c55e" />
           </div>
-          <h3 style={{ fontSize: '1.4rem', fontWeight: '800', color: '#fff', margin: '0 0 10px' }}>Water Quality is Stable</h3>
-          <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.9rem', maxWidth: '500px', margin: '0 auto 20px', lineHeight: '1.5' }}>
-            All IoT sensor values are within safe ecological limits. No bio-remediation actions are required at this time. Keep monitoring!
-          </p>
+          <h3 style={{ fontSize: '1.4rem', fontWeight: '800', color: '#fff', margin: '0' }}>All parameters are in safe ranges ✅</h3>
         </motion.div>
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '20px' }}>

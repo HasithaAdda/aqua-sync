@@ -133,13 +133,21 @@ const Dashboard = ({ user, role, stats, onLogout }) => {
     if (path.includes('/weather')) return 'METEOROLOGICAL DATA';
     if (path.includes('/insights')) return 'BIOLOGICAL INSIGHTS';
     if (path.includes('/market')) return 'MARKET INTEL & TRENDS';
-    if (path.includes('/alerts')) return 'SYSTEM ALERTS & RECOMMENDATIONS';
-    if (path.includes('/hatcheries')) return 'GOVERNMENT HATCHERIES';
-    if (path.includes('/schemes')) return 'GOVERNMENT SCHEMES';
+    if (path.includes('/alerts')) return 'REAL-TIME ALERTS & ACTION CENTRE';
+    if (path.includes('/hatcheries')) return 'GOVERNMENT HATCHERIES & SEED CENTRES';
+    if (path.includes('/schemes')) return 'GOVERNMENT SCHEMES & SUBSIDIES';
     if (path.includes('/farmers')) return 'OPERATOR DIRECTORY';
     if (path.includes('/registry')) return 'FARM REGISTRY';
     if (path.includes('/regional')) return 'REGIONAL PERFORMANCE';
     return role === 'authority' ? 'AUTHORITY DASHBOARD' : 'SMART FARMER DASHBOARD';
+  };
+
+  const getHeaderSubtitle = () => {
+    const path = location.pathname;
+    if (path.includes('/schemes')) return 'Explore financial assistances and development programs by the Directorate of Fisheries, Goa';
+    if (path.includes('/hatcheries')) return 'Locate state-certified breeding facilities and obtain premium quality seeds in Goa';
+    if (path.includes('/alerts')) return 'Biosecurity recommendations based on live IoT sensor readings';
+    return null;
   };
 
   const navLinks = role === 'authority' ? [
@@ -225,17 +233,15 @@ const Dashboard = ({ user, role, stats, onLogout }) => {
       <main className="dashboard-premium-shell" style={{ flex: 1, padding: '30px 40px', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         <motion.header initial={{ y: -50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="glass-deep" style={{ padding: '20px 40px', marginBottom: '30px', borderRadius: '32px', border: '1px solid rgba(255,255,255,0.08)', position: 'relative', zIndex: 10, background: 'rgba(0,12,17,0.7)', maxWidth: '1400px', margin: '0 auto 30px', width: '100%' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-            <h1 style={{ fontSize: '1.8rem', color: '#fff', margin: 0, fontWeight: '900', letterSpacing: '-1px' }}>
-              {getHeaderTitle()}
-            </h1>
-            <div style={{ display: 'flex', gap: '15px' }}>
-               <div className="glass-card" style={{ padding: '8px 15px', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#22c55e', boxShadow: '0 0 10px #22c55e' }}></div>
-                  <span style={{ fontSize: '0.7rem', color: '#fff', fontWeight: '700', letterSpacing: '1px' }}>SYSTEM ONLINE</span>
-               </div>
-               <button className="btn-premium" style={{ width: '40px', height: '40px', padding: 0, justifyContent: 'center' }}>
-                  <Bell size={18} />
-               </button>
+            <div>
+              <h1 style={{ fontSize: '1.8rem', color: '#fff', margin: 0, fontWeight: '900', letterSpacing: '-1px' }}>
+                {getHeaderTitle()}
+              </h1>
+              {getHeaderSubtitle() && (
+                <p style={{ margin: '5px 0 0', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+                  {getHeaderSubtitle()}
+                </p>
+              )}
             </div>
           </div>
         </motion.header>

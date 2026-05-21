@@ -68,8 +68,8 @@ const getHotspotIcon = (color, tag) => {
 const selectedFarmIcon = L.divIcon({
     className: 'tactical-selected-farm-icon',
     html: `
-        <div class="selected-farm-wrapper">
-            <span style="font-size: 22px;">🚜</span>
+        <div class="selected-farm-wrapper" style="z-index: 9999 !important;">
+            <span style="font-size: 22px;">🐟</span>
             <div class="selected-farm-glow"></div>
         </div>
     `,
@@ -80,8 +80,8 @@ const selectedFarmIcon = L.divIcon({
 const standardFarmIcon = L.divIcon({
     className: 'tactical-farm-icon',
     html: `
-        <div class="standard-farm-wrapper" style="width: 35px; height: 35px; background: #3b82f6; box-shadow: 0 2px 5px rgba(0,0,0,0.3); border: 2px solid #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-            <span style="font-size: 16px;">🚜</span>
+        <div class="standard-farm-wrapper" style="width: 35px; height: 35px; background: #3b82f6; box-shadow: 0 2px 5px rgba(0,0,0,0.3); border: 2px solid #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 1000;">
+            <span style="font-size: 16px;">🐟</span>
         </div>
     `,
     iconSize: [35, 35],
@@ -115,6 +115,9 @@ export default function MapDashboard({ sensorData, userLocation }) {
     const [activeLayers, setActiveLayers] = useState(['hotspots', 'farms']);
     const coordinatesRef = useRef(null);
 
+    const [firebaseFarms, setFirebaseFarms] = useState([]);
+    const markerRef = useRef(null);
+
     // Sub-component to handle map re-centering
     const MapController = ({ lat, lng }) => {
         const map = useMap();
@@ -134,6 +137,34 @@ export default function MapDashboard({ sensorData, userLocation }) {
         });
         return () => unsubscribe();
     }, []);
+
+    useEffect(() => {
+        const unsub = onSnapshot(collection(db, 'farms'), (snapshot) => {
+            const farms = [];
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                if (data.name && data.name !== 'Unknown Farm') {
+                    farms.push({ ...data, location: data.location || data.address });
+                }
+            });
+            setFirebaseFarms(farms);
+        });
+        return () => unsub();
+    }, []);
+
+    const allFarms = useMemo(() => {
+        const combined = [...MOCK_FARMS, ...firebaseFarms];
+        return Array.from(new Map(combined.map(item => [item.id, item])).values());
+    }, [firebaseFarms]);
+
+    useEffect(() => {
+        if (farmState && markerRef.current) {
+            // Wait for map to fly to location before opening popup
+            setTimeout(() => {
+                if (markerRef.current) markerRef.current.openPopup();
+            }, 500);
+        }
+    }, [farmState]);
 
     const toggleLayer = (layer) => {
         setActiveLayers(prev => 
@@ -165,6 +196,8 @@ export default function MapDashboard({ sensorData, userLocation }) {
                         position={[farmState.lat, farmState.lng]}
                         eventHandlers={{ click: () => navigate('/dashboard/registry', { state: { selectedFarm: farmState } }) }}
                         icon={selectedFarmIcon}
+                        zIndexOffset={10000}
+                        ref={(r) => { if (r && !r.isPopupOpen()) r.openPopup() }}
                     >
                         <Popup className="custom-farm-popup">
                             <div style={{ minWidth: '220px', fontFamily: 'sans-serif', color: '#1a2b22' }}>
@@ -212,11 +245,6 @@ export default function MapDashboard({ sensorData, userLocation }) {
                     
                     return (
                         <React.Fragment key={incident.id}>
-                            <Circle 
-                                center={[incident.location.latitude, incident.location.longitude]}
-                                radius={400}
-                                pathOptions={{ color: statusColor, fillColor: statusColor, fillOpacity: incident.status === 'Pending' ? 0.3 : 0.15, weight: 1.5 }}
-                            />
                             <Marker
                                 position={[incident.location.latitude, incident.location.longitude]}
                                 icon={getHotspotIcon(statusColor, tag)}
@@ -241,7 +269,7 @@ export default function MapDashboard({ sensorData, userLocation }) {
                 })}
 
                 {/* ── 2. ALL FARMS LAYER ── */}
-                {activeLayers.includes('farms') && MOCK_FARMS.map((farm) => {
+                {activeLayers.includes('farms') && allFarms.map((farm) => {
                     if (farmState && farmState.id === farm.id) return null;
                     return (
                         <Marker

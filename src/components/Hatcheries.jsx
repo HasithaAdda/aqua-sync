@@ -36,15 +36,7 @@ const Hatcheries = () => {
 
   return (
     <div style={{ padding: '30px', color: '#fff', background: 'transparent' }}>
-      {/* Header */}
-      <div style={{ marginBottom: '30px' }}>
-        <h2 style={{ fontSize: '1.6rem', fontWeight: '900', letterSpacing: '-0.5px', margin: 0 }}>
-          GOVERNMENT HATCHERIES & SEED CENTRES
-        </h2>
-        <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '5px' }}>
-          Locate state-certified breeding facilities and obtain premium quality seeds in Goa
-        </p>
-      </div>
+      {/* Removed Header to use Dashboard unified header */}
 
       {/* Grid */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(450px, 1fr))', gap: '25px' }}>
