@@ -1,10 +1,163 @@
 import React, { useState } from 'react';
-import { Activity, Wifi, BarChart2, OfflineBolt, ImageOff } from 'lucide-react';
+import { Wifi, WifiOff, BrainCircuit, Dna, Gauge, Droplets, Waves, Thermometer, ChevronUp, ChevronDown, Minus } from 'lucide-react';
 import { getSpeciesRecommendations } from '../services/predictionService';
+import { motion, AnimatePresence } from 'framer-motion';
 
+// ── Suitability badge colour mapped to web app's ocean theme
+const getStatusStyle = (status) => {
+  switch (status) {
+    case 'Highly Suitable':
+      return { color: '#2dd4bf', bg: 'rgba(45,212,191,0.12)', border: '1px solid rgba(45,212,191,0.4)' };
+    case 'Suitable':
+      return { color: '#86efac', bg: 'rgba(134,239,172,0.12)', border: '1px solid rgba(134,239,172,0.4)' };
+    case 'Moderately Suitable':
+      return { color: '#facc15', bg: 'rgba(250,204,21,0.12)', border: '1px solid rgba(250,204,21,0.4)' };
+    default:
+      return { color: '#f87171', bg: 'rgba(248,113,113,0.12)', border: '1px solid rgba(248,113,113,0.4)' };
+  }
+};
+
+// ── Score bar fill colour
+const getScoreColor = (score) => {
+  if (score >= 85) return 'var(--seafoam)';
+  if (score >= 70) return '#86efac';
+  if (score >= 50) return '#facc15';
+  return '#f87171';
+};
+
+// ── Species emoji map
+const getSpeciesEmoji = (species) => {
+  const map = {
+    'whiteleg shrimp': '🦐',
+    'tiger shrimp': '🦐',
+    'tilapia': '🐟',
+    'catfish': '🐡',
+    'milkfish': '🐠',
+  };
+  return map[species.toLowerCase()] || '🐟';
+};
+
+// ── Parameter sensor row
+const SensorRow = ({ icon: Icon, label, value, unit }) => (
+  <div style={{
+    display: 'flex',
+    alignItems: 'center',
+    gap: '14px',
+    padding: '12px 0',
+    borderBottom: '1px solid rgba(255,255,255,0.04)',
+  }}>
+    <div style={{
+      width: '36px', height: '36px', borderRadius: '10px',
+      background: 'rgba(45,212,191,0.08)',
+      border: '1px solid rgba(45,212,191,0.15)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      color: 'var(--seafoam)', flexShrink: 0
+    }}>
+      <Icon size={16} />
+    </div>
+    <span style={{ flex: 1, color: 'var(--text-secondary)', fontSize: '0.85rem', fontWeight: 600, letterSpacing: '0.5px' }}>
+      {label}
+    </span>
+    <span style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 800, color: '#fff', fontSize: '1rem' }}>
+      {typeof value === 'number' ? value.toFixed(1) : value}
+      <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', marginLeft: '4px' }}>{unit}</span>
+    </span>
+  </div>
+);
+
+// ── Recommendation card
+const RecommendationCard = ({ rec, index }) => {
+  const statusStyle = getStatusStyle(rec.status);
+  const scoreColor = getScoreColor(rec.score);
+  const pct = Math.min(100, rec.score);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.08, type: 'spring', stiffness: 120 }}
+      className="glass-deep"
+      style={{
+        borderRadius: '20px',
+        padding: '24px',
+        marginBottom: '16px',
+        border: '1px solid rgba(255,255,255,0.07)',
+        backgroundColor: 'rgba(0,12,17,0.6)',
+        position: 'relative',
+        overflow: 'hidden',
+        transition: 'transform 0.25s, box-shadow 0.25s',
+      }}
+      whileHover={{ y: -3, boxShadow: `0 16px 40px rgba(0,0,0,0.4), 0 0 20px ${statusStyle.color}20` }}
+    >
+      {/* Left accent bar */}
+      <div style={{
+        position: 'absolute', left: 0, top: 0, bottom: 0, width: '4px',
+        background: `linear-gradient(to bottom, ${statusStyle.color}, transparent)`,
+        borderRadius: '20px 0 0 20px'
+      }} />
+
+      {/* Header row */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '14px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+          <span style={{ fontSize: '2.2rem', lineHeight: 1 }}>{getSpeciesEmoji(rec.name)}</span>
+          <div>
+            <h3 style={{
+              margin: 0, color: '#fff', fontFamily: "'Outfit', sans-serif",
+              fontSize: '1.2rem', fontWeight: 800, letterSpacing: '0.5px'
+            }}>
+              {rec.name}
+            </h3>
+            {rec.isLocalFallback && (
+              <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#facc15', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '1px', marginTop: '2px' }}>
+                <WifiOff size={11} /> LOCAL MODEL
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Status badge */}
+        <div style={{
+          padding: '6px 14px', borderRadius: '50px',
+          background: statusStyle.bg,
+          border: statusStyle.border,
+          color: statusStyle.color,
+          fontSize: '0.72rem', fontWeight: 800,
+          letterSpacing: '0.5px', textTransform: 'uppercase',
+          whiteSpace: 'nowrap'
+        }}>
+          {rec.status}
+        </div>
+      </div>
+
+      {/* Score bar */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+        <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
+          Suitability
+        </span>
+        <div style={{ flex: 1, height: '6px', background: 'rgba(255,255,255,0.07)', borderRadius: '3px', overflow: 'hidden' }}>
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: `${pct}%` }}
+            transition={{ delay: index * 0.08 + 0.2, duration: 0.6, ease: 'easeOut' }}
+            style={{ height: '100%', borderRadius: '3px', background: `linear-gradient(to right, ${scoreColor}80, ${scoreColor})` }}
+          />
+        </div>
+        <span style={{
+          fontFamily: "'Outfit', sans-serif", fontWeight: 900,
+          fontSize: '1rem', color: scoreColor, minWidth: '48px', textAlign: 'right'
+        }}>
+          {rec.score.toFixed(0)}%
+        </span>
+      </div>
+    </motion.div>
+  );
+};
+
+// ── Main Component
 const SpeciesRecommendation = ({ sensorData }) => {
-  const [speciesPredictions, setSpeciesPredictions] = useState([]);
+  const [recommendations, setRecommendations] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [hasRun, setHasRun] = useState(false);
 
   const currentTemp = sensorData?.temperature ?? 28.0;
   const currentPh = sensorData?.ph ?? 7.5;
@@ -13,252 +166,148 @@ const SpeciesRecommendation = ({ sensorData }) => {
 
   const handlePredict = async () => {
     setLoading(true);
+    setHasRun(false);
     try {
-      const recommendations = await getSpeciesRecommendations(currentTemp, currentPh, currentSalinity, currentTurbidity);
-      
-      const formattedRecommendations = recommendations.map((rec) => ({
-         id: rec.species.toLowerCase().replace(' ', '-'),
-         name: rec.species,
-         score: rec.score,
-         status: rec.status,
-         isLocalFallback: rec.isLocalFallback
+      const raw = await getSpeciesRecommendations(currentTemp, currentPh, currentSalinity, currentTurbidity);
+      const formatted = raw.map((rec) => ({
+        id: rec.species.toLowerCase().replace(/\s+/g, '-'),
+        name: rec.species,
+        score: rec.score,
+        status: rec.status,
+        isLocalFallback: rec.isLocalFallback,
       }));
-      
-      setSpeciesPredictions(formattedRecommendations);
+      setRecommendations(formatted);
     } catch (err) {
-      console.error("Error fetching species:", err);
+      console.error('Species prediction error:', err);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'Highly Suitable': return '#4caf50'; // green
-      case 'Suitable': return '#8bc34a'; // lightGreen
-      case 'Moderately Suitable': return '#ff9800'; // orange
-      default: return '#f44336'; // red
-    }
-  };
-
-  const getImageForSpecies = (species) => {
-    switch (species.toLowerCase()) {
-      case 'whiteleg shrimp': return '/assets/images/whiteleg_shrimp.png';
-      case 'tiger shrimp': return '/assets/images/tiger_shrimp.png';
-      case 'tilapia': return '/assets/images/tilapia.png';
-      case 'catfish': return '/assets/images/catfish.png';
-      case 'milkfish': return '/assets/images/milkfish.png';
-      default: return null;
+      setHasRun(true);
     }
   };
 
   return (
-    <div style={{ 
-      backgroundColor: '#f8fafc',
+    <div style={{
       height: '100%',
       width: '100%',
+      overflowY: 'auto',
+      padding: '32px',
       fontFamily: "'Inter', sans-serif",
-      color: '#1e293b',
-      overflowY: 'auto'
+      color: '#fff',
+      boxSizing: 'border-box',
     }}>
-      {/* AppBar */}
-      <div style={{ 
-        backgroundColor: '#1e3a8a', 
-        padding: '16px 24px',
-        color: 'white',
-        fontWeight: 'bold',
-        fontSize: '1.2rem',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-      }}>
-        AI Species Prediction
-      </div>
+      <div style={{ maxWidth: '800px', margin: '0 auto' }}>
 
-      <div style={{ padding: '16px', maxWidth: '800px', margin: '0 auto' }}>
-        {/* Input Section */}
-        <div style={{ 
-          backgroundColor: 'white',
-          borderRadius: '16px',
-          padding: '20px',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
-          marginBottom: '24px'
-        }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-            <h2 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 'bold' }}>Live IoT Parameters</h2>
-            <div style={{ 
-              backgroundColor: '#e8f5e9', 
-              border: '1px solid #4caf50',
-              borderRadius: '12px',
-              padding: '4px 8px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '4px'
+        {/* ── Live Parameters Card ── */}
+        <motion.div
+          initial={{ opacity: 0, y: -16 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="glass-deep"
+          style={{
+            borderRadius: '24px',
+            padding: '28px 32px',
+            marginBottom: '28px',
+            border: '1px solid rgba(255,255,255,0.07)',
+            backgroundColor: 'rgba(0,12,17,0.7)',
+          }}
+        >
+          {/* Card header */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+            <h2 style={{ margin: 0, fontFamily: "'Outfit', sans-serif", fontSize: '1.15rem', fontWeight: 800, letterSpacing: '2px', textTransform: 'uppercase', color: '#fff' }}>
+              Live IoT Parameters
+            </h2>
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: '6px',
+              background: 'rgba(45,212,191,0.1)',
+              border: '1px solid rgba(45,212,191,0.3)',
+              borderRadius: '50px', padding: '5px 12px',
             }}>
-              <Wifi size={14} color="#4caf50" />
-              <span style={{ color: '#4caf50', fontSize: '0.75rem', fontWeight: 'bold' }}>Live</span>
+              <Wifi size={13} color="var(--seafoam)" />
+              <span style={{ color: 'var(--seafoam)', fontSize: '0.7rem', fontWeight: 800, letterSpacing: '1.5px' }}>LIVE</span>
             </div>
           </div>
-          
-          <p style={{ color: '#757575', fontSize: '0.85rem', marginTop: 0, marginBottom: '20px' }}>
-            These values are streaming live from your farm's sensors via Firebase.
+          <p style={{ margin: '0 0 20px', color: 'var(--text-secondary)', fontSize: '0.82rem' }}>
+            Streaming in real-time from your farm's IoT sensors via Firebase.
           </p>
 
-          <ReadonlySlider label="Temperature (°C)" value={currentTemp} min={15} max={45} />
-          <ReadonlySlider label="pH Level" value={currentPh} min={0} max={14} />
-          <ReadonlySlider label="Salinity (ppt)" value={currentSalinity} min={0} max={40} />
-          <ReadonlySlider label="Turbidity (NTU)" value={currentTurbidity} min={0} max={100} />
-        </div>
+          <SensorRow icon={Thermometer} label="Temperature" value={currentTemp} unit="°C" />
+          <SensorRow icon={Droplets} label="pH Level" value={currentPh} unit="pH" />
+          <SensorRow icon={Waves} label="Salinity" value={currentSalinity} unit="ppt" />
+          <SensorRow icon={Gauge} label="Turbidity" value={currentTurbidity} unit="NTU" />
+        </motion.div>
 
-        {/* Predict Button */}
-        <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-          <button 
+        {/* ── Predict Button ── */}
+        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+          <button
+            id="species-predict-btn"
+            className="btn-premium"
             onClick={handlePredict}
             disabled={loading}
             style={{
-              backgroundColor: '#2563eb',
-              color: 'white',
-              border: 'none',
-              padding: '16px 32px',
-              borderRadius: '30px',
-              fontSize: '1rem',
-              fontWeight: 'bold',
+              opacity: loading ? 0.75 : 1,
               cursor: loading ? 'not-allowed' : 'pointer',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '8px',
-              boxShadow: '0 4px 6px rgba(37, 99, 235, 0.2)',
-              opacity: loading ? 0.8 : 1
+              fontSize: '0.85rem',
+              letterSpacing: '2px',
+              padding: '16px 40px',
             }}
           >
             {loading ? (
-              <div className="spinner" style={{ width: '20px', height: '20px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: 'white', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+              <>
+                <div style={{ width: '16px', height: '16px', border: '2px solid rgba(0,0,0,0.2)', borderTopColor: '#000', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+                ANALYZING...
+              </>
             ) : (
-              <BarChart2 size={20} />
+              <>
+                <BrainCircuit size={18} />
+                PREDICT BEST SPECIES
+              </>
             )}
-            {loading ? 'Analyzing...' : 'Predict Best Species'}
           </button>
         </div>
 
-        {/* Recommendations */}
-        {speciesPredictions.length > 0 && (
-          <div>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#1e293b', marginBottom: '12px' }}>
-              Recommended Species
-            </h2>
-            
-            {speciesPredictions.map((rec) => {
-              const badgeColor = getStatusColor(rec.status);
-              const imgPath = getImageForSpecies(rec.name);
-
-              return (
-                <div key={rec.id} style={{
-                  backgroundColor: 'white',
-                  borderRadius: '16px',
-                  padding: '16px',
-                  boxShadow: '0 3px 10px rgba(0,0,0,0.08)',
-                  marginBottom: '16px'
+        {/* ── Results ── */}
+        <AnimatePresence>
+          {hasRun && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              {recommendations.length > 0 ? (
+                <>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+                    <Dna size={20} color="var(--seafoam)" />
+                    <h2 style={{
+                      margin: 0, fontFamily: "'Outfit', sans-serif",
+                      fontSize: '1rem', fontWeight: 800,
+                      letterSpacing: '3px', textTransform: 'uppercase', color: '#fff'
+                    }}>
+                      Recommended Species
+                    </h2>
+                    <div style={{ flex: 1, height: '1px', background: 'rgba(255,255,255,0.06)' }} />
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
+                      {recommendations.length} results
+                    </span>
+                  </div>
+                  {recommendations.map((rec, i) => (
+                    <RecommendationCard key={rec.id} rec={rec} index={i} />
+                  ))}
+                </>
+              ) : (
+                <div style={{
+                  textAlign: 'center', padding: '40px',
+                  color: 'var(--text-secondary)', fontSize: '0.9rem'
                 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 'bold', color: '#1e293b' }}>
-                      {rec.name}
-                    </h3>
-                    <div style={{ fontSize: '1rem', fontWeight: '600', color: '#2563eb' }}>
-                      Score: {rec.score.toFixed(1)}%
-                    </div>
-                  </div>
-                  
-                  <div style={{ display: 'flex', alignItems: 'center', marginTop: '8px', gap: '8px' }}>
-                    <div style={{
-                      backgroundColor: badgeColor + '1A', // 10% opacity
-                      border: `1px solid ${badgeColor}`,
-                      borderRadius: '8px',
-                      padding: '6px 10px',
-                      color: badgeColor,
-                      fontSize: '0.8rem',
-                      fontWeight: 'bold'
-                    }}>
-                      {rec.status}
-                    </div>
-                    {rec.isLocalFallback && (
-                      <OfflineBolt size={20} color="#ff9800" title="Local Fallback Used" />
-                    )}
-                  </div>
-
-                  <div style={{ marginTop: '16px', textAlign: 'center' }}>
-                    {imgPath ? (
-                      <img 
-                        src={imgPath} 
-                        alt={rec.name} 
-                        style={{ height: '180px', objectFit: 'contain', borderRadius: '12px' }} 
-                        onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
-                      />
-                    ) : null}
-                    <div style={{ 
-                      display: imgPath ? 'none' : 'flex', 
-                      height: '180px', 
-                      backgroundColor: '#e0e0e0',
-                      borderRadius: '12px',
-                      flexDirection: 'column',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      color: '#757575'
-                    }}>
-                      <ImageOff size={40} />
-                      <span style={{ marginTop: '8px', fontSize: '0.9rem' }}>Image not found</span>
-                    </div>
-                  </div>
+                  No species recommendations generated. Adjust sensor conditions and retry.
                 </div>
-              );
-            })}
-          </div>
-        )}
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
+
       <style>{`
         @keyframes spin { 100% { transform: rotate(360deg); } }
-        /* Reset slider default styles for readonly effect */
-        input[type=range] {
-          -webkit-appearance: none;
-          width: 100%;
-          background: transparent;
-        }
-        input[type=range]::-webkit-slider-thumb {
-          -webkit-appearance: none;
-        }
-        input[type=range]:focus {
-          outline: none;
-        }
       `}</style>
-    </div>
-  );
-};
-
-const ReadonlySlider = ({ label, value, min, max }) => {
-  const percentage = ((value - min) / (max - min)) * 100;
-  
-  return (
-    <div style={{ marginBottom: '16px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-        <span style={{ fontWeight: '600', fontSize: '0.9rem' }}>{label}</span>
-        <span style={{ fontWeight: 'bold', color: '#2563eb' }}>{value.toFixed(1)}</span>
-      </div>
-      <div style={{ position: 'relative', width: '100%', height: '4px', backgroundColor: 'rgba(37, 99, 235, 0.2)', borderRadius: '2px' }}>
-        <div style={{ 
-          position: 'absolute', 
-          height: '100%', 
-          backgroundColor: '#2563eb', 
-          borderRadius: '2px',
-          width: `${Math.max(0, Math.min(100, percentage))}%`
-        }} />
-        <div style={{
-          position: 'absolute',
-          width: '16px',
-          height: '16px',
-          backgroundColor: '#2563eb',
-          borderRadius: '50%',
-          top: '50%',
-          transform: 'translate(-50%, -50%)',
-          left: `${Math.max(0, Math.min(100, percentage))}%`
-        }} />
-      </div>
     </div>
   );
 };

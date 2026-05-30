@@ -98,69 +98,91 @@ export const getSpeciesRecommendations = async (temp, ph, salinity, turbidity) =
 
 // --- Disease Prediction ---
 
-const getLocalFallbackDiseasePrediction = (species, temperature, ph, turbidity) => {
+const getBacterialInfectionRisk = (temperature, ph, salinity, turbidity) => {
+    let riskScore = 0;
+    if (turbidity > 30) riskScore += 2;
+    else if (turbidity > 20) riskScore += 1;
+    if (temperature >= 26 && temperature <= 32) riskScore += 1;
+    if (ph >= 6.5 && ph <= 8.5) riskScore += 1;
+    if (salinity <= 10) riskScore += 1;
+    if (riskScore >= 4) return 'High';
+    if (riskScore >= 2) return 'Moderate';
+    return 'Low';
+};
+
+const getLocalFallbackDiseasePrediction = (species, temperature, ph, salinity, turbidity) => {
     const isSeabass = species.toLowerCase().includes("seabass");
     const minTemp = isSeabass ? 26.0 : 24.0;
     const maxTemp = isSeabass ? 32.0 : 30.0;
-    const minPh = isSeabass ? 7.0 : 6.5;
-    const maxPh = isSeabass ? 8.5 : 9.0;
+    const minPh   = isSeabass ? 7.0  : 6.5;
+    const maxPh   = isSeabass ? 8.5  : 9.0;
     const maxTurb = isSeabass ? 20.0 : 25.0;
+    const minSal  = isSeabass ? 10.0 : 0.0;
+    const maxSal  = isSeabass ? 30.0 : 5.0;
 
     let riskScore = 0;
     const riskFactors = [];
 
     // Temperature
     if (temperature < minTemp - 2 || temperature > maxTemp + 2) {
-        riskScore += 2;
-        riskFactors.push("Critical Temp");
+        riskScore += 2; riskFactors.push("Critical Temp");
     } else if (temperature < minTemp || temperature > maxTemp) {
-        riskScore += 1;
-        riskFactors.push("Mild Temp Alert");
+        riskScore += 1; riskFactors.push("Mild Temp Alert");
     }
 
     // pH
     if (ph < minPh - 0.5 || ph > maxPh + 0.5) {
-        riskScore += 2;
-        riskFactors.push("Critical pH");
+        riskScore += 2; riskFactors.push("Critical pH");
     } else if (ph < minPh || ph > maxPh) {
-        riskScore += 1;
-        riskFactors.push("Mild pH Alert");
+        riskScore += 1; riskFactors.push("Mild pH Alert");
+    }
+
+    // Salinity
+    if (salinity < minSal - 5 || salinity > maxSal + 5) {
+        riskScore += 2; riskFactors.push("Critical Salinity");
+    } else if (salinity < minSal || salinity > maxSal) {
+        riskScore += 1; riskFactors.push("Unstable Salinity");
     }
 
     // Turbidity
     if (turbidity > maxTurb + 10) {
-        riskScore += 2;
-        riskFactors.push("Critical Turbidity");
+        riskScore += 2; riskFactors.push("Critical Turbidity");
     } else if (turbidity > maxTurb) {
-        riskScore += 1;
-        riskFactors.push("Elevated Turbidity");
+        riskScore += 1; riskFactors.push("Elevated Turbidity");
     }
 
+    const bacterialRisk = getBacterialInfectionRisk(temperature, ph, salinity, turbidity);
+
+    let basePrediction;
     if (riskScore === 0) {
-        return "Healthy / Safe conditions (Local)";
+        basePrediction = "Healthy / Safe conditions (Local)";
     } else if (riskScore <= 2) {
-        return `Mild risk: ${riskFactors.join(', ')} (Local)`;
+        basePrediction = `Mild risk: ${riskFactors.join(', ')} (Local)`;
     } else {
-        return `High risk: ${riskFactors.join(', ')} (Local)`;
+        basePrediction = `High risk: ${riskFactors.join(', ')} (Local)`;
     }
+
+    return `${basePrediction} | Bacterial Infection Risk: ${bacterialRisk}`;
 };
 
-export const getDiseasePrediction = async (species, temperature, ph, turbidity, doValue) => {
+export const getDiseasePrediction = async (species, temperature, ph, salinity, turbidity, doValue) => {
     try {
         const response = await fetchWithTimeout(ML_API_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ species, temperature, pH: ph, turbidity, do: doValue })
+            body: JSON.stringify({ species, temperature, pH: ph, turbidity: salinity, do: turbidity })
         });
 
         if (response.ok) {
             const data = await response.json();
-            return data.prediction || "Unknown (API returned empty)";
+            const basePrediction = data.prediction || "Unknown (API returned empty)";
+            const bacterialRisk = getBacterialInfectionRisk(temperature, ph, salinity, turbidity);
+            return `${basePrediction} | Bacterial Infection Risk: ${bacterialRisk}`;
         }
         console.log(`ML API HTTP Error. Falling back to local.`);
-        return getLocalFallbackDiseasePrediction(species, temperature, ph, turbidity);
+        return getLocalFallbackDiseasePrediction(species, temperature, ph, salinity, turbidity);
     } catch (err) {
         console.log(`ML API Exception: ${err.message}. Falling back to local.`);
-        return getLocalFallbackDiseasePrediction(species, temperature, ph, turbidity);
+        return getLocalFallbackDiseasePrediction(species, temperature, ph, salinity, turbidity);
     }
 };
