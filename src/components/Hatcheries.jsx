@@ -39,7 +39,7 @@ const Hatcheries = () => {
       {/* Removed Header to use Dashboard unified header */}
 
       {/* Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(450px, 1fr))', gap: '25px' }}>
+      <div className="hatcheries-grid">
         {hatcheriesList.map((hatchery) => (
           <motion.div
             key={hatchery.id}
@@ -93,15 +93,7 @@ const Hatcheries = () => {
               </p>
 
               {/* Specs Grid */}
-              <div style={{ 
-                display: 'grid', 
-                gridTemplateColumns: 'repeat(2, 1fr)', 
-                gap: '15px', 
-                padding: '15px', 
-                backgroundColor: 'rgba(255, 255, 255, 0.02)', 
-                borderRadius: '16px',
-                border: '1px solid rgba(255, 255, 255, 0.04)' 
-              }}>
+              <div className="hatcheries-specs-grid">
                 <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                   <Clock size={16} style={{ color: 'var(--seafoam)', flexShrink: 0 }} />
                   <div>

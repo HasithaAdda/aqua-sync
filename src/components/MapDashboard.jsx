@@ -2,11 +2,11 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents, Circle } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { collection, query, where, onSnapshot, orderBy } from 'firebase/firestore';
+import { collection, query, onSnapshot, orderBy } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import { MOCK_FARMS } from './FarmRegistry';
+import { MOCK_FARMS } from './mockFarms';
+
 import { 
     Satellite,
     Map as MapIcon,
@@ -103,7 +103,7 @@ function MapEvents({ coordinatesRef }) {
     return null;
 }
 
-export default function MapDashboard({ sensorData, userLocation }) {
+export default function MapDashboard({ userLocation }) {
     const location = useLocation();
     const navigate = useNavigate();
     const farmState = location.state?.farm;

@@ -65,10 +65,9 @@ const FeaturesGrid = () => {
 
       {/* High-Fidelity Grid */}
       <div 
-        className="services-grid-high-fidelity"
-        style={{ gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px', maxWidth: '1400px' }}
+        className="services-grid-high-fidelity features-grid-responsive"
       >
-        {features.map((feature, idx) => (
+        {features.map((feature) => (
           <div 
             key={feature.id}
             className="services-card-vertical"

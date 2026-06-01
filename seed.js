@@ -1,3 +1,4 @@
+/* global process */
 import { db } from './src/firebase.js';
 import { collection, addDoc, serverTimestamp, GeoPoint } from 'firebase/firestore';
 

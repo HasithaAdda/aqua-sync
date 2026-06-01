@@ -255,7 +255,16 @@ const RiskProfile = ({ species, sensorData, index }) => {
 
         if (mounted) setPrediction(parseResult(enriched));
       } catch {
-        if (mounted) setPrediction({ riskLevel: 1, mlStatus: 'ML Server Offline', bacterialRisk: null });
+        if (mounted) {
+          const fallbackResult = getLocalFallbackPrediction(
+            species,
+            sensorData.temperature,
+            sensorData.ph,
+            sensorData.salinity ?? 10.0,
+            sensorData.turbidity
+          );
+          setPrediction(parseResult(fallbackResult));
+        }
       } finally {
         if (mounted) setIsWaiting(false);
       }

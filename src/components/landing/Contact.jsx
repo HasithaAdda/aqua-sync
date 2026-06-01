@@ -93,7 +93,7 @@ const Contact = () => {
         </div>
       </div>
 
-      <div style={{ maxWidth: '1300px', margin: '0 auto', display: 'grid', gridTemplateColumns: '1.1fr 0.9fr', gap: '50px', alignItems: 'center', position: 'relative', zIndex: 2 }}>
+      <div className="contact-grid-responsive">
 
         {/* Form Side */}
         <motion.div
@@ -109,7 +109,7 @@ const Contact = () => {
           </div>
 
           <form onSubmit={handleSubmit}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
+            <div className="form-row-responsive">
               <div>
                 <label className="form-label-premium">FIRST NAME</label>
                 <input
@@ -136,7 +136,7 @@ const Contact = () => {
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
+            <div className="form-row-responsive">
               <div>
                 <label className="form-label-premium">PHONE</label>
                 <input

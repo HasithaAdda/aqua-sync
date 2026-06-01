@@ -15,7 +15,6 @@ import {
 const LiveWeatherCard = ({ userLocation }) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
   const [selectedDayIdx, setSelectedDayIdx] = useState(0);
 
@@ -88,9 +87,8 @@ const LiveWeatherCard = ({ userLocation }) => {
         waveHeight: (marine.current?.wave_height || 0.8).toFixed(1),
         forecast: forecast
       });
-      setError(null);
-    } catch (err) {
-      setError("Satellite Link Fault");
+    } catch {
+      // Failed to load satellite weather data
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -138,7 +136,7 @@ const LiveWeatherCard = ({ userLocation }) => {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'auto auto 1fr', gap: '20px', alignItems: 'center', marginBottom: '15px' }}>
+      <div className="weather-card-grid-top">
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           {getWeatherIcon(activeDay.code, isForecastMode ? 1 : data.isDay, 50)}
           <div style={{ display: 'flex', alignItems: 'baseline' }}>
@@ -152,7 +150,7 @@ const LiveWeatherCard = ({ userLocation }) => {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginBottom: '15px', background: 'rgba(255,255,255,0.01)', padding: '12px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.03)' }}>
+      <div className="weather-card-grid-metrics">
         <Metric label="AIR Q" value={isForecastMode ? '--' : data.aqi} />
         <Metric label="PRESSURE" value={isForecastMode ? '--' : `${data.pressure} hPa`} />
         <Metric label="WAVES" value={isForecastMode ? '--' : `${data.waveHeight}m`} />
@@ -160,7 +158,7 @@ const LiveWeatherCard = ({ userLocation }) => {
       </div>
 
       <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '15px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '6px' }}>
+        <div className="weather-card-grid-forecast">
           {data?.forecast.map((day, idx) => {
             const isActive = selectedDayIdx === idx;
             return (

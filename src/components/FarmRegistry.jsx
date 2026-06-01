@@ -8,68 +8,8 @@ import {
   MapPin, Map as MapIcon, FileText, CheckCircle, Clock, XCircle, FileWarning, TrendingUp
 } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { MOCK_FARMS } from './mockFarms';
 
-export const MOCK_FARMS = [
-  {
-    id: "FRM-2024-001",
-    name: "Goa Smart Prawn Farm",
-    owner: "Rajesh Sharma",
-    location: "Calangute, Bardez",
-    status: "Active",
-    phone: "+91 98765 43210",
-    email: "rajesh.sharma@example.com",
-    lat: 15.5406,
-    lng: 73.7562,
-    docs: [
-      { name: "License", status: "Verified" },
-      { name: "Land Ownership", status: "Verified" },
-      { name: "Pollution Certificate", status: "Verified" },
-    ]
-  },
-  {
-    id: "FRM-2024-002",
-    name: "Khazan Traditional Farm",
-    owner: "Sandeep Naik",
-    location: "Divar, Tiswadi",
-    status: "Pending Approval",
-    phone: "+91 98765 43211",
-    email: "sandeep.n@example.com",
-    lat: 15.5122,
-    lng: 73.9161,
-    docs: [
-      { name: "License", status: "Pending" },
-      { name: "Land Ownership", status: "Verified" },
-    ]
-  },
-  {
-    id: "FRM-2024-003",
-    name: "Mandovi Cage Culture",
-    owner: "Anthony Fernandes",
-    location: "Panjim, Tiswadi",
-    status: "Inactive",
-    phone: "+91 98765 43212",
-    email: "anthony.f@example.com",
-    lat: 15.4909,
-    lng: 73.8278,
-    docs: [
-      { name: "License", status: "Expired" },
-    ]
-  },
-  {
-    id: "FRM-2024-004",
-    name: "Zuari Biofloc Unit",
-    owner: "Preeti Singh",
-    location: "Cortalim, Mormugao",
-    status: "Rejected",
-    phone: "+91 98765 43213",
-    email: "preeti.s@example.com",
-    lat: 15.4057,
-    lng: 73.9221,
-    docs: [
-      { name: "License", status: "Rejected" },
-    ]
-  }
-];
 
 const MOCK_METRICS = {
   temp: {
@@ -198,7 +138,7 @@ const FarmRegistry = () => {
           >
 
             {/* Search and Action */}
-            <div style={{ display: 'flex', gap: '20px', marginBottom: '25px' }}>
+            <div className="search-row-responsive">
               <div style={{ flex: 1, position: 'relative' }}>
                 <Search size={18} style={{ position: 'absolute', left: '15px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.4)' }} />
                 <input 
@@ -224,7 +164,7 @@ const FarmRegistry = () => {
             </div>
 
             {/* Filters */}
-            <div style={{ display: 'flex', gap: '10px', marginBottom: '30px' }}>
+            <div className="filters-row-responsive">
               {['All', 'Active', 'Pending', 'Inactive'].map(f => (
                 <button 
                   key={f}
@@ -246,23 +186,20 @@ const FarmRegistry = () => {
               ))}
             </div>
 
-            {/* List */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              {filteredFarms.map((farm, idx) => (
-                <motion.div 
-                  key={farm.id}
-                  initial={{ opacity: 0, y: 15 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: idx * 0.05 }}
-                  onClick={() => setSelectedFarm(farm)}
+             {/* List */}
+             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+               {filteredFarms.map((farm, idx) => (
+                 <motion.div 
+                   key={farm.id}
+                   initial={{ opacity: 0, y: 15 }}
+                   animate={{ opacity: 1, y: 0 }}
+                   transition={{ delay: idx * 0.05 }}
+                   onClick={() => setSelectedFarm(farm)}
+                   className="farm-card-responsive"
                   style={{
-                    padding: '30px', 
                     borderRadius: '24px', 
                     border: '1px solid rgba(255,255,255,0.1)',
                     background: 'linear-gradient(145deg, rgba(2, 56, 89, 0.3), rgba(1, 28, 64, 0.5))',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
                     cursor: 'pointer',
                     boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
                     transition: 'all 0.3s ease',

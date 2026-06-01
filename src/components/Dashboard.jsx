@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase';
-import { signOut } from 'firebase/auth';
-import { auth } from '../firebase';
 import { 
   Users, 
   BarChart3, 
@@ -23,7 +21,9 @@ import {
   Compass,
   Plus,
   ClipboardList,
-  BrainCircuit
+  BrainCircuit,
+  Menu,
+  X
 } from 'lucide-react';
 import { useNavigate, NavLink, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -48,6 +48,7 @@ import GovtSchemes from './GovtSchemes';
 const Dashboard = ({ user, role, stats, onLogout }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // --- IoT REAL-TIME DATA STATE ---
   const [sensorData, setSensorData] = useState({
@@ -120,7 +121,7 @@ const Dashboard = ({ user, role, stats, onLogout }) => {
           const res = await fetch('https://ipapi.co/json/');
           const data = await res.json();
           setUserLocation({ lat: data.latitude, lng: data.longitude, isDetected: true });
-        } catch (err) {
+        } catch {
           setUserLocation({ lat: 15.42, lng: 73.80, isDetected: false });
         }
       }
@@ -131,7 +132,7 @@ const Dashboard = ({ user, role, stats, onLogout }) => {
   const getHeaderTitle = () => {
     const path = location.pathname;
     if (path.includes('/map')) return 'GIS MAP VIEW';
-    if (path.includes('/incidents')) return role === 'authority' ? 'AUTHORITY INCIDENT LOGS' : 'INCIDENT LOGS';
+    if (path.includes('/incidents')) return 'INCIDENT LOGS';
     if (path.includes('/weather')) return 'METEOROLOGICAL DATA';
     if (path.includes('/insights')) return 'BIOLOGICAL INSIGHTS';
     if (path.includes('/market')) return 'MARKET INTEL & TRENDS';
@@ -149,7 +150,6 @@ const Dashboard = ({ user, role, stats, onLogout }) => {
     if (path.includes('/schemes')) return 'Explore financial assistances and development programs by the Directorate of Fisheries, Goa';
     if (path.includes('/hatcheries')) return 'Locate state-certified breeding facilities and obtain premium quality seeds in Goa';
     if (path.includes('/alerts')) return 'Biosecurity recommendations based on live IoT sensor readings';
-    if (path.includes('/incidents') && role === 'authority') return 'Monitor and manage all incoming distress signals and suspicious activity reports.';
     return null;
   };
 
@@ -169,13 +169,51 @@ const Dashboard = ({ user, role, stats, onLogout }) => {
   ];
 
   return (
-    <div className="app-container" style={{ display: 'flex', height: '100vh', width: '100vw', background: '#000c11', overflow: 'hidden' }}>
+    <div className="responsive-app-shell">
       
-      <aside className="glass-deep" style={{ width: '300px', margin: '20px', display: 'flex', flexDirection: 'column', borderRadius: '32px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(0,12,17,0.85)', position: 'relative', zIndex: 100 }}>
+      {/* Mobile Top Header */}
+      <div className="mobile-top-bar">
+        <button 
+          onClick={() => setSidebarOpen(true)} 
+          style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', outline: 'none' }}
+        >
+          <Menu size={24} />
+        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <img src={customLogo} alt="Logo" style={{ width: '32px', height: '32px', objectFit: 'contain' }} />
+          <span style={{ fontWeight: 800, fontSize: '1rem', color: '#fff', letterSpacing: '1px' }}>AQUA SYNC</span>
+        </div>
+        <div style={{ width: '24px' }}></div>
+      </div>
+
+      {/* Sidebar Mobile Backdrop Overlay */}
+      {sidebarOpen && (
+        <div 
+          onClick={() => setSidebarOpen(false)} 
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.6)',
+            backdropFilter: 'blur(4px)',
+            zIndex: 1999
+          }}
+        />
+      )}
+      
+      <aside className={`glass-deep responsive-sidebar ${sidebarOpen ? 'active' : ''}`}>
         <div style={{ padding: '40px 30px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-          <button className="btn-premium-outline" onClick={() => navigate('/')} style={{ padding: '10px 20px', marginBottom: '30px', width: '100%', justifyContent: 'center', fontSize: '0.75rem' }}>
-            <ArrowLeft size={16} /> BACK TO HOME
-          </button>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', gap: '10px' }}>
+            <button className="btn-premium-outline" onClick={() => { navigate('/'); setSidebarOpen(false); }} style={{ padding: '10px 20px', flex: 1, justifyContent: 'center', fontSize: '0.75rem', margin: 0 }}>
+              <ArrowLeft size={16} /> BACK TO HOME
+            </button>
+            <button 
+              onClick={() => setSidebarOpen(false)} 
+              style={{ background: 'rgba(255, 60, 60, 0.1)', border: '1px solid rgba(255, 60, 60, 0.2)', borderRadius: '10px', color: '#ff4d4d', cursor: 'pointer', padding: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', outline: 'none' }}
+              className="nav-mobile-toggle"
+            >
+              <X size={16} />
+            </button>
+          </div>
           
           <div style={{ display: 'flex', alignItems: 'center', gap: '18px' }}>
              <div className="feature-card-icon-blob biolume-pulse" style={{ width: '50px', height: '50px', border: '2px solid var(--seafoam)' }}>
@@ -196,6 +234,7 @@ const Dashboard = ({ user, role, stats, onLogout }) => {
               end={item.id === ''} 
               className={({ isActive }) => `btn ${isActive ? 'btn-premium' : 'btn-premium-outline'}`} 
               style={{ justifyContent: 'flex-start', width: '100%', padding: '16px 24px', textDecoration: 'none', border: 'none', boxShadow: 'none' }}
+              onClick={() => setSidebarOpen(false)}
             >
               {item.icon} {item.label}
             </NavLink>
@@ -240,8 +279,8 @@ const Dashboard = ({ user, role, stats, onLogout }) => {
         </div>
       </aside>
 
-      <main className="dashboard-premium-shell" style={{ flex: 1, padding: '30px 40px', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-        <motion.header initial={{ y: -50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="glass-deep" style={{ padding: '20px 40px', marginBottom: '30px', borderRadius: '32px', border: '1px solid rgba(255,255,255,0.08)', position: 'relative', zIndex: 10, background: 'rgba(0,12,17,0.7)', maxWidth: '1400px', margin: '0 auto 30px', width: '100%' }}>
+      <main className="dashboard-premium-shell responsive-main">
+        <motion.header initial={{ y: -50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="glass-deep responsive-header" style={{ border: '1px solid rgba(255,255,255,0.08)', position: 'relative', zIndex: 10, background: 'rgba(0,12,17,0.7)', maxWidth: '1400px', margin: '0 auto 30px', width: '100%' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
             <div>
               <h1 style={{ fontSize: '1.8rem', color: '#fff', margin: 0, fontWeight: '900', letterSpacing: '-1px' }}>
@@ -259,23 +298,23 @@ const Dashboard = ({ user, role, stats, onLogout }) => {
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'relative', zIndex: 1 }}>
           <Routes>
             {/* Common Routes */}
-            <Route path="incidents" element={<div className="glass-deep" style={{ flex: 1, padding: 0, overflow: 'hidden', borderRadius: '32px' }}><IncidentReporting role={role} userLocation={userLocation} /></div>} />
-            <Route path="map" element={<div className="glass-deep" style={{ flex: 1, display: 'flex', padding: 0, overflow: 'hidden', borderRadius: '32px' }}><MapDashboard sensorData={sensorData} userLocation={userLocation} /></div>} />
+            <Route path="incidents" element={<div className="glass-deep glass-deep-subpage" style={{ flex: 1, padding: 0, overflow: 'hidden', borderRadius: '32px' }}><IncidentReporting role={role} userLocation={userLocation} user={user} /></div>} />
+            <Route path="map" element={<div className="glass-deep glass-deep-subpage" style={{ flex: 1, display: 'flex', padding: 0, overflow: 'hidden', borderRadius: '32px' }}><MapDashboard sensorData={sensorData} userLocation={userLocation} /></div>} />
 
             {role === 'authority' ? (
               <>
-                <Route index element={<div className="glass-deep" style={{ flex: 1, padding: 0, overflowY: 'auto', borderRadius: '32px' }}><RegionalOverview stats={stats} userLocation={userLocation} /></div>} />
-                <Route path="registry" element={<div className="glass-deep" style={{ flex: 1, padding: 0, overflowY: 'auto', borderRadius: '32px' }}><FarmRegistry /></div>} />
+                <Route index element={<div className="glass-deep glass-deep-subpage" style={{ flex: 1, padding: 0, overflowY: 'auto', borderRadius: '32px' }}><RegionalOverview stats={stats} userLocation={userLocation} /></div>} />
+                <Route path="registry" element={<div className="glass-deep glass-deep-subpage" style={{ flex: 1, padding: 0, overflowY: 'auto', borderRadius: '32px' }}><FarmRegistry /></div>} />
                 <Route path="*" element={<Navigate to="" replace />} />
               </>
             ) : (
               <>
                 <Route index element={<FarmerDashboard sensorData={sensorData} userLocation={userLocation} />} />
-                <Route path="species" element={<div className="glass-deep" style={{ flex: 1, padding: 0, overflowY: 'auto', borderRadius: '32px' }}><SpeciesRecommendation sensorData={sensorData} /></div>} />
-                <Route path="market" element={<div className="glass-deep" style={{ flex: 1, padding: 0, overflowY: 'auto', borderRadius: '32px' }}><MarketInsights sensorData={sensorData} /></div>} />
-                <Route path="alerts" element={<div className="glass-deep" style={{ flex: 1, padding: 0, overflowY: 'auto', borderRadius: '32px' }}><Alerts sensorData={sensorData} /></div>} />
-                <Route path="hatcheries" element={<div className="glass-deep" style={{ flex: 1, padding: 0, overflowY: 'auto', borderRadius: '32px' }}><Hatcheries /></div>} />
-                <Route path="schemes" element={<div className="glass-deep" style={{ flex: 1, padding: 0, overflowY: 'auto', borderRadius: '32px' }}><GovtSchemes /></div>} />
+                <Route path="species" element={<div className="glass-deep glass-deep-subpage" style={{ flex: 1, padding: 0, overflowY: 'auto', borderRadius: '32px' }}><SpeciesRecommendation sensorData={sensorData} /></div>} />
+                <Route path="market" element={<div className="glass-deep glass-deep-subpage" style={{ flex: 1, padding: 0, overflowY: 'auto', borderRadius: '32px' }}><MarketInsights sensorData={sensorData} /></div>} />
+                <Route path="alerts" element={<div className="glass-deep glass-deep-subpage" style={{ flex: 1, padding: 0, overflowY: 'auto', borderRadius: '32px' }}><Alerts sensorData={sensorData} /></div>} />
+                <Route path="hatcheries" element={<div className="glass-deep glass-deep-subpage" style={{ flex: 1, padding: 0, overflowY: 'auto', borderRadius: '32px' }}><Hatcheries /></div>} />
+                <Route path="schemes" element={<div className="glass-deep glass-deep-subpage" style={{ flex: 1, padding: 0, overflowY: 'auto', borderRadius: '32px' }}><GovtSchemes /></div>} />
                 <Route path="*" element={<Navigate to="" replace />} />
               </>
             )}

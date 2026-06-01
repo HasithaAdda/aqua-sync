@@ -23,7 +23,7 @@ const Footer = () => {
         zIndex: 0
       }}></div>
 
-      <div style={{ 
+      <div className="footer-grid-responsive" style={{ 
         maxWidth: '1400px', 
         margin: '0 auto', 
         display: 'grid', 

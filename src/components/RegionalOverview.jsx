@@ -18,7 +18,7 @@ const RegionalOverview = ({ stats, userLocation }) => {
       </div>
 
       {/* KPI Cards (Dark Glassmorphic style matching the image's layout structure) */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px' }}>
+      <div className="dashboard-kpi-grid-responsive">
         <motion.div 
           whileHover={{ y: -5, scale: 1.02 }}
           onClick={() => navigate('/dashboard/registry')}

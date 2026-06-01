@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { auth, db } from './firebase';
-import { onAuthStateChanged } from 'firebase/auth';
-import { collection, query, where, onSnapshot, doc, getDoc, setDoc } from 'firebase/firestore';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { collection, query, where, onSnapshot, doc, setDoc } from 'firebase/firestore';
 import LandingPage from './components/LandingPage';
 import DashboardShell from './components/Dashboard';
 import Login from './components/Login';

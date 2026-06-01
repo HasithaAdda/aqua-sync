@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import oceanBg from '../../assets/ocean-bg.png';
 import { 
   Zap, 
@@ -6,7 +6,6 @@ import {
   ShieldCheck
 } from 'lucide-react';
 import heroImg_final from '../../assets/hero-fish.png';
-import { useNavigate } from 'react-router-dom';
 import FeaturesGrid from './FeaturesGrid';
 import { motion, AnimatePresence } from 'framer-motion';
 import gsap from 'gsap';
@@ -99,10 +98,16 @@ const FishBreathingBubbles = () => {
       // 70% chance to emit a bubble every 600ms, creating natural irregularity
       if (Math.random() > 0.3) {
         const id = Date.now() + Math.random();
-        setBubbles(prev => [...prev, id]);
+        const newBubble = {
+          id,
+          xTarget: -50 - Math.random() * 50,
+          yTarget: -100 - Math.random() * 80,
+          size: 4 + Math.random() * 6
+        };
+        setBubbles(prev => [...prev, newBubble]);
         // Clean up after animation duration
         setTimeout(() => {
-          setBubbles(prev => prev.filter(b => b !== id));
+          setBubbles(prev => prev.filter(b => b.id !== id));
         }, 3000);
       }
     }, 600);
@@ -118,22 +123,22 @@ const FishBreathingBubbles = () => {
       pointerEvents: 'none' 
     }}>
       <AnimatePresence>
-        {bubbles.map(id => (
+        {bubbles.map(b => (
           <motion.div
-            key={id}
+            key={b.id}
             initial={{ opacity: 0, scale: 0.1, x: 0, y: 0 }}
             animate={{ 
               opacity: [0, 0.9, 0], 
               scale: [0.1, 1, 1.4],
               // Bubbles float away from the mouth (leftward and upward)
-              x: [-10, -50 - Math.random() * 50],
-              y: [-10, -100 - Math.random() * 80]
+              x: [-10, b.xTarget],
+              y: [-10, b.yTarget]
             }}
             transition={{ duration: 2.8, ease: "circOut" }}
             style={{
               position: 'absolute',
-              width: `${4 + Math.random() * 6}px`,
-              height: `${4 + Math.random() * 6}px`,
+              width: `${b.size}px`,
+              height: `${b.size}px`,
               borderRadius: '50%',
               background: 'rgba(255, 255, 255, 0.5)',
               border: '0.5px solid rgba(255, 255, 255, 0.8)',
@@ -150,12 +155,25 @@ const FishBreathingBubbles = () => {
 
 
 const Hero = ({ onEnterApp }) => {
-  const navigate   = useNavigate();
   const fishRef    = useRef(null);
   const bgRef      = useRef(null);  // parallax bg layer
   const rafRef     = useRef(null);
 
+  const [particles, setParticles] = useState([]);
+
   useEffect(() => {
+    const timer = setTimeout(() => {
+      setParticles(Array.from({ length: 28 }, (_, i) => ({
+        id: i,
+        left: Math.random() * 100,
+        top: Math.random() * 100,
+        width: 2 + Math.random() * 4,
+        height: 2 + Math.random() * 4,
+        delay: Math.random() * 8,
+        duration: 5 + Math.random() * 8,
+      })));
+    }, 0);
+
     // ── Scroll-driven parallax on the bg image ──
     const onScroll = () => {
       if (bgRef.current) {
@@ -176,6 +194,7 @@ const Hero = ({ onEnterApp }) => {
     }
 
     return () => {
+      clearTimeout(timer);
       window.removeEventListener('scroll', scheduleRAF);
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
@@ -256,14 +275,14 @@ const Hero = ({ onEnterApp }) => {
 
       {/* ── Floating bioluminescent particles ── */}
       <div style={{ position: 'absolute', inset: 0, zIndex: 2, pointerEvents: 'none' }}>
-        {[...Array(28)].map((_, i) => (
-          <div key={i} className="ocean-particle" style={{
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`,
-            width: `${2 + Math.random() * 4}px`,
-            height: `${2 + Math.random() * 4}px`,
-            animationDelay: `${Math.random() * 8}s`,
-            animationDuration: `${5 + Math.random() * 8}s`,
+        {particles.map(p => (
+          <div key={p.id} className="ocean-particle" style={{
+            left: `${p.left}%`,
+            top: `${p.top}%`,
+            width: `${p.width}px`,
+            height: `${p.height}px`,
+            animationDelay: `${p.delay}s`,
+            animationDuration: `${p.duration}s`,
           }} />
         ))}
       </div>
@@ -275,9 +294,9 @@ const Hero = ({ onEnterApp }) => {
         style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', width: '90%', maxWidth: '1400px', margin: '0 auto', height: '100%' }}
       >
         
-        <div style={{ display: 'flex', alignItems: 'center', width: '100%', justifyContent: 'space-between', marginBottom: '20px', gap: '30px', textAlign: 'left', flex: 1 }}>
+        <div className="hero-content-row">
           
-          <div style={{ flex: 1.4, minWidth: '500px' }}>
+          <div className="hero-text-side">
             <motion.div 
               variants={itemVariants}
               style={{
@@ -300,7 +319,7 @@ const Hero = ({ onEnterApp }) => {
             
             <motion.h1 
               variants={itemVariants}
-              style={{ fontSize: '6.5rem', marginTop: '0', marginBottom: '5px', color: '#ffffff', lineHeight: '0.85', fontWeight: '900', letterSpacing: '-3px' }}
+              className="hero-title-giant"
             >
               AQUA <br /> 
               <span className="gradient-text" style={{ paddingRight: '20px' }}> SYNC</span>
@@ -333,7 +352,7 @@ const Hero = ({ onEnterApp }) => {
             initial={{ opacity: 0, scale: 0.9, x: 50 }}
             animate={{ opacity: 1, scale: 1, x: 0 }}
             transition={{ duration: 1, delay: 0.5 }}
-            style={{ flex: 1, display: 'flex', justifyContent: 'center', position: 'relative' }}
+            className="hero-image-side"
           >
              <div className="fish-container-premium" style={{ width: '100%', maxWidth: '450px' }}>
                 <FishBreathingBubbles />
@@ -354,7 +373,7 @@ const Hero = ({ onEnterApp }) => {
 
         <motion.div 
           variants={itemVariants}
-          style={{ display: 'flex', justifyContent: 'center', width: '100%', marginBottom: '100px', marginTop: '-60px' }}
+          className="hero-btn-wrapper"
         >
           <button className="btn-premium" onClick={onEnterApp} style={{ padding: '15px 40px', fontSize: '1rem' }}>
             <Zap size={20} fill="currentColor" /> GET STARTED

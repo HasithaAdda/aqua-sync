@@ -170,7 +170,7 @@ export const getDiseasePrediction = async (species, temperature, ph, salinity, t
         const response = await fetchWithTimeout(ML_API_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ species, temperature, pH: ph, turbidity: salinity, do: turbidity })
+            body: JSON.stringify({ species, temperature, pH: ph, turbidity, do: doValue })
         });
 
         if (response.ok) {

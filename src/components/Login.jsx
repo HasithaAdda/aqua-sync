@@ -10,8 +10,7 @@ import {
 } from 'firebase/auth';
 import { 
   doc, 
-  setDoc,
-  getDoc
+  setDoc
 } from 'firebase/firestore';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -35,7 +34,7 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import oceanBg from '../assets/underwater_surface_bg.png';
-
+ 
 const Login = ({ onGuestEntry }) => {
   const [isRegistering, setIsRegistering] = useState(false);
   const [email, setEmail] = useState('');
@@ -46,6 +45,12 @@ const Login = ({ onGuestEntry }) => {
   const [showPassword, setShowPassword] = useState(false);
   
   const navigate = useNavigate();
+
+  const handleContinueAsGuest = () => {
+    if (onGuestEntry) {
+      onGuestEntry(role);
+    }
+  };
 
   const handleAuth = async (e) => {
     e.preventDefault();
@@ -200,29 +205,7 @@ const Login = ({ onGuestEntry }) => {
           opacity: { duration: 1 },
           y: { duration: 5, repeat: Infinity, ease: "easeInOut" }
         }}
-        style={{
-          width: '840px',
-          height: '630px',
-          padding: '40px 80px',
-          borderRadius: '60px', // More rounded as in reference
-          background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.02))', 
-          backdropFilter: 'blur(15px) saturate(160%) contrast(105%)', // High clarity
-          border: '1px solid rgba(255, 255, 255, 0.4)',
-          zIndex: 10,
-          boxShadow: `
-            0 30px 60px rgba(0, 0, 0, 0.4), 
-            inset 0 0 0 2px rgba(255, 255, 255, 0.2), 
-            inset 0 10px 20px rgba(255, 255, 255, 0.2), 
-            inset 0 -10px 20px rgba(0, 0, 0, 0.1),
-            0 0 20px rgba(0, 229, 255, 0.1)
-          `, // Complex stacking for "thick glass" depth
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          position: 'relative',
-          overflow: 'hidden'
-        }}
+        className="login-card-responsive"
       >
         {/* Specular Highlight (The 'Glossy' shine) */}
         <div style={{
@@ -489,7 +472,7 @@ const Login = ({ onGuestEntry }) => {
               boxShadow: '0 10px 30px rgba(0, 0, 0, 0.4)'
             }}
           >
-            {loading ? 'SYNCHRONIZING...' : 'Login'}
+            {loading ? (isRegistering ? 'REGISTERING...' : 'LOGGING IN...') : (isRegistering ? 'Register' : 'Login')}
             {!loading && <ArrowRight size={24} />}
           </motion.button>
         </form>
@@ -509,6 +492,26 @@ const Login = ({ onGuestEntry }) => {
             }}
           >
             {isRegistering ? 'Already have an account? Log in' : <span>New user? <span style={{ color: '#00E5FF', textDecoration: 'underline' }}>Register</span></span>}
+          </button>
+          <button 
+            type="button"
+            onClick={handleContinueAsGuest}
+            style={{ 
+              background: 'none', 
+              border: 'none', 
+              color: 'rgba(255, 255, 255, 0.5)', 
+              fontSize: '0.95rem',
+              cursor: 'pointer',
+              fontWeight: '700',
+              letterSpacing: '1px',
+              textDecoration: 'underline',
+              marginTop: '5px',
+              transition: 'color 0.2s'
+            }}
+            onMouseEnter={e => e.currentTarget.style.color = '#00E5FF'}
+            onMouseLeave={e => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.5)'}
+          >
+            Continue as Guest
           </button>
         </div>
       </motion.div>

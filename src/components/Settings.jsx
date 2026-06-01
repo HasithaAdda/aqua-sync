@@ -128,7 +128,6 @@ const Settings = ({ onLogout }) => {
                       style={{ 
                         padding: '12px', 
                         borderRadius: '10px', 
-                        border: 'none', 
                         background: config.sensitivity === s ? 'linear-gradient(135deg, #26658C, #0ea5e9)' : 'rgba(255, 255, 255, 0.08)',
                         color: config.sensitivity === s ? '#fff' : 'rgba(167, 235, 242, 0.7)',
                         fontSize: '0.75rem',

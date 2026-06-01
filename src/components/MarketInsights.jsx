@@ -210,10 +210,15 @@ const MarketInsights = ({ sensorData }) => {
 
   const dynamicPriceHistory = useMemo(() => {
     if (!selectedFish) return [];
-    return Array.from({ length: 7 }, (_, i) => ({
-      day: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][i],
-      price: selectedFish.price * (0.9 + Math.random() * 0.2)
-    }));
+    const idSeed = selectedFish.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    return Array.from({ length: 7 }, (_, i) => {
+      const x = Math.sin(idSeed + i) * 10000;
+      const randomFactor = 0.9 + (x - Math.floor(x)) * 0.2;
+      return {
+        day: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][i],
+        price: Math.round(selectedFish.price * randomFactor)
+      };
+    });
   }, [selectedFish]);
 
   return (
@@ -254,7 +259,7 @@ const MarketInsights = ({ sensorData }) => {
       {/* FULL GRID */}
       <section>
         <h2 style={{ fontSize: '2.5rem', fontWeight: '900', color: '#0f172a', textAlign: 'center', marginBottom: '40px' }}>Market Intelligence</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '30px', maxWidth: '1400px', margin: '0 auto' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))', gap: '30px', maxWidth: '1400px', margin: '0 auto' }}>
           {MARKET_DATA.map((fish) => (
             <motion.div key={fish.id} whileHover={{ scale: 1.02 }} style={{ background: '#fff', borderRadius: '32px', padding: '40px', display: 'flex', flexDirection: 'column', alignItems: 'center', boxShadow: '0 20px 50px rgba(0,0,0,0.03)' }}>
               <h3 style={{ fontSize: '1.4rem', fontWeight: '800', marginBottom: '30px', color: '#334155' }}>{fish.name}</h3>

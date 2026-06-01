@@ -1,3 +1,4 @@
+/* global process */
 import { db } from './src/firebase.js';
 import { collection, getDocs, setDoc, deleteDoc, doc } from 'firebase/firestore';
 
