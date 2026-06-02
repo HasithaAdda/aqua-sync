@@ -5,7 +5,7 @@ import { collection, getDocs, limit, query, orderBy } from 'firebase/firestore';
 const readComplaints = async () => {
     try {
         console.log('Fetching latest 5 complaints from Firestore...');
-        const q = query(collection(db, 'complaints'), orderBy('timestamp', 'desc'), limit(5));
+        const q = query(collection(db, 'complaints'), orderBy('timestamp', 'desc'), limit(100));
         const snapshot = await getDocs(q);
         
         console.log(`Found ${snapshot.size} documents.`);

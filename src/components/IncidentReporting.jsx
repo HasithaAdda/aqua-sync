@@ -150,6 +150,7 @@ export default function IncidentReporting({ role, userLocation, user }) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
     const [myReports, setMyReports] = useState([]);
+    const [loadError, setLoadError] = useState(null);
     
     // Media & Speech States
     const [imagePreview, setImagePreview] = useState(null);
@@ -261,8 +262,10 @@ export default function IncidentReporting({ role, userLocation, user }) {
                 return getMs(b.timestamp) - getMs(a.timestamp);
             });
             setMyReports(docs);
+            setLoadError(null);
         }, (error) => {
             console.error("Firestore onSnapshot error in IncidentReporting:", error);
+            setLoadError(error.message || String(error));
         });
         return () => unsubscribe();
     }, []);
@@ -759,7 +762,15 @@ export default function IncidentReporting({ role, userLocation, user }) {
 
                         {/* List/Grid Scroll Area */}
                         <div style={{ padding: '30px 40px 40px', flex: 1, overflowY: 'auto' }}>
-                            {myReports.length === 0 ? (
+                            {loadError ? (
+                                <div style={{ textAlign: 'center', padding: '80px 20px', color: '#ff4d4d' }}>
+                                    <AlertCircle size={48} style={{ opacity: 0.8, margin: '0 auto 16px' }} />
+                                    <h3 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#ff4d4d', letterSpacing: '1px' }}>Database Access Error</h3>
+                                    <p style={{ marginTop: '10px', fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)' }}>
+                                        {loadError}
+                                    </p>
+                                </div>
+                            ) : myReports.length === 0 ? (
                                 <div style={{ textAlign: 'center', padding: '100px 20px', color: 'rgba(255,255,255,0.3)' }}>
                                     <History size={64} style={{ opacity: 0.5, margin: '0 auto 20px' }} />
                                     <h3 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#fff' }}>No reports recorded in the system.</h3>
