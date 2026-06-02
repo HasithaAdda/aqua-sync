@@ -235,10 +235,34 @@ export default function IncidentReporting({ role, userLocation, user }) {
 
     // Fetch reports
     useEffect(() => {
-        const q = query(collection(db, 'complaints'), orderBy('timestamp', 'desc'));
+        const q = query(collection(db, 'complaints'));
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            // Sort locally to avoid requiring composite Firestore indexes
+            docs.sort((a, b) => {
+                const getMs = (timestamp) => {
+                    if (!timestamp) return 0;
+                    if (typeof timestamp.toDate === 'function') {
+                        try {
+                            return timestamp.toDate().getTime();
+                        } catch {
+                            // ignore
+                        }
+                    }
+                    if (timestamp instanceof Date) return timestamp.getTime();
+                    if (timestamp.seconds) return timestamp.seconds * 1000;
+                    try {
+                        const d = new Date(timestamp);
+                        return isNaN(d.getTime()) ? 0 : d.getTime();
+                    } catch {
+                        return 0;
+                    }
+                };
+                return getMs(b.timestamp) - getMs(a.timestamp);
+            });
             setMyReports(docs);
+        }, (error) => {
+            console.error("Firestore onSnapshot error in IncidentReporting:", error);
         });
         return () => unsubscribe();
     }, []);
